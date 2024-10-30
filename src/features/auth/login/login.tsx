@@ -1,9 +1,80 @@
-import { Box, Button, Flex, FormControl, Img, Input, Text } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  Img,
+  Input,
+  Spinner,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { loginAsync } from "../../../store/auth/async";
+import { loginSchema, LoginSchema } from "../../../validations/loginSchema";
 
 export function LoginForm() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useAppSelector((state) => state.auth);
+  const toast = useToast();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+    mode: "all",
+    reValidateMode: "onChange",
+  });
+
+  const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
+    const res = await dispatch(loginAsync(data));
+
+    if (loginAsync.fulfilled.match(res)) {
+      toast({
+        title: "Welcome.",
+        description: "Welcome to DumbMerch.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+
+      reset({
+        email: "",
+        password: "",
+      });
+
+      const role = res.payload.user.role;
+      navigate(role === "ADMIN" ? "/admin" : "/");
+    } else if (loginAsync.rejected.match(res) && error) {
+      toast({
+        title: "Login Failed",
+        description: "invalid email or password",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
+  
+
   return (
-    <Flex height="100vh" alignItems="center" justifyContent="center" bg="black" color="white" p={10}>
+    <Flex
+      height="100vh"
+      alignItems="center"
+      justifyContent="center"
+      bg="black"
+      color="white"
+      p={10}
+    >
       <Box flex="1" ml={"7%"}>
         <Img src="/src/assets/logo.svg" alt="Logo" width={"30%"} />
         <Text fontSize={"45px"} mt={"30px"} color="white">
@@ -28,8 +99,8 @@ export function LoginForm() {
             Login
           </Button>
           <Button
-          as={Link}
-          to={"/register"}
+            as={Link}
+            to={"/register"}
             padding={"5px 50px"}
             bgColor={"transparent"}
             color={"white"}
@@ -53,24 +124,49 @@ export function LoginForm() {
         <Text fontSize="3xl" fontWeight={"bold"} color="white" mb={6}>
           Login
         </Text>
-        <FormControl mb={5}>
-          <Input type="email" padding={"25px 10px"} placeholder="Email" _placeholder={{ color: "#BCBCBC" }}  bg="#555555" border={"none"} color="white" />
-        </FormControl>
-        <FormControl mb={10}>
-          <Input type="password" padding={"25px 10px"} placeholder="Password" _placeholder={{ color: "#BCBCBC" }}  bg="#555555" border={"none"} color="white" />
-        </FormControl>
-        <Button
-        as={Link}
-        to={"/"}
-          width="full"
-          padding={"25px 10px"}
-          bgColor={"#F74D4D"}
-          color={"white"}
-          _hover={{ bgColor: "#D63C3C" }}
-          fontWeight={"bold"}
-        >
-          Login
-        </Button>
+        <form onClick={handleSubmit(onSubmit)}>
+          <FormControl mb={5} isInvalid={!!errors.email}>
+            <Input
+              type="email"
+              padding={"25px 10px"}
+              placeholder="Email"
+              _placeholder={{ color: "#BCBCBC" }}
+              bg="#555555"
+              border={"none"}
+              color="white"
+              {...register("email")}
+            />
+            <FormErrorMessage>
+              {errors.email && errors.email.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl mb={10} isInvalid={!!errors.password}>
+            <Input
+              type="password"
+              padding={"25px 10px"}
+              placeholder="Password"
+              _placeholder={{ color: "#BCBCBC" }}
+              bg="#555555"
+              border={"none"}
+              color="white"
+              {...register("password")}
+            />
+            <FormErrorMessage>
+              {errors.password && errors.password.message}
+            </FormErrorMessage>
+          </FormControl>
+          <Button
+            width="full"
+            padding={"25px 10px"}
+            bgColor={"#F74D4D"}
+            color={"white"}
+            _hover={{ bgColor: "#D63C3C" }}
+            fontWeight={"bold"}
+            type="submit"
+          >
+            {loading ? <Spinner color="white" /> : "Login"}
+          </Button>
+        </form>
       </Box>
     </Flex>
   );

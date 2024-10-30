@@ -18,10 +18,15 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../../store";
+import { deleteProduct, getProducts } from "../../../../store/product/async";
+import { IProduct } from "../../../../types/product";
 import { NavbarAdmin } from "../../../navbar/navbar-admin";
-import { EditProduct } from "./edit-product";
 import { AddProduct } from "./add-product";
+import { EditProduct } from "./edit-product";
 
 export function ProductAdmin() {
   return (
@@ -44,6 +49,55 @@ export function ProductForm() {
     onOpen: onAddOpen,
     onClose: onAddClose,
   } = useDisclosure();
+
+  const dispatch = useAppDispatch();
+  const toast = useToast();
+  const { products, error } = useAppSelector((state) => state.product);
+
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
+  const [productToDelete, setProductToDelete] = useState<IProduct| null>(null);
+
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch]);
+
+  const handleOpenEdit = (product: IProduct) => {
+    setSelectedProduct(product);
+    onOpen();
+  };
+
+  const handleDeleteProduct = async () => {
+    if (productToDelete) {
+      try {
+        await dispatch(deleteProduct(productToDelete.id));
+        toast({
+          title: "Product deleted successfully",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        onDeleteClose();
+      } catch (error) {
+        toast({
+          title: "Failed to delete product",
+          description: (error as Error).message || "Something went wrong",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+  
+  
+
+  if (error) {
+    return (
+      <Text color={"white"} fontSize={"25px"} fontWeight={"bold"}>
+        {error}
+      </Text>
+    );
+  }
 
   return (
     <>
@@ -78,72 +132,75 @@ export function ProductForm() {
               </Tr>
             </Thead>
             <Tbody bg={"#232323"}>
-              <Tr>
-                <Td>1</Td>
-                <Td
-                  maxW="150px"
-                  whiteSpace="nowrap"
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                >
-                  MOUSE.jpg
-                </Td>
-                <Td
-                  maxW="150px"
-                  whiteSpace="nowrap"
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                >
-                  MOUSE
-                </Td>
-                <Td
-                  maxW="150px"
-                  whiteSpace="nowrap"
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                >
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi
-                  atque cumque ipsa quis, eos architecto repudiandae. Assumenda
-                  dolorum deserunt quas?
-                </Td>
-                <Td>700.000</Td>
-                <Td>60</Td>
-                <Td>
-                  <Button
-                    size={"sm"}
-                    bgColor={"#56C05A"}
-                    color={"white"}
-                    width={"40%"}
-                    borderRadius={"md"}
-                    _hover={{ bgColor: "#4cd94c" }}
-                    _active={{ bgColor: "#3f963f" }}
-                    boxShadow="0 2px 4px rgba(0, 0, 0, 0.2)"
-                    mr={2}
-                    mt={2}
-                    mb={2}
-                    fontWeight={"bold"}
-                    onClick={onOpen}
+              {products?.map((product, index) => (
+                <Tr key={product.id}>
+                  <Td>{index + 1}</Td>
+                  <Td
+                    maxW="150px"
+                    whiteSpace="nowrap"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
                   >
-                    Edit
-                  </Button>
-                  <Button
-                    size={"sm"}
-                    bgColor={"#F74D4D"}
-                    color={"white"}
-                    borderRadius={"md"}
-                    width={"40%"}
-                    _hover={{ bgColor: "#FF6B6B" }}
-                    _active={{ bgColor: "#C62C2C" }}
-                    boxShadow="0 2px 4px rgba(0, 0, 0, 0.2)"
-                    mb={2}
-                    mt={2}
-                    fontWeight={"bold"}
-                    onClick={onDeleteOpen}
+                    {product.image}
+                  </Td>
+                  <Td
+                    maxW="150px"
+                    whiteSpace="nowrap"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
                   >
-                    Delete
-                  </Button>
-                </Td>
-              </Tr>
+                    {product.product_name}
+                  </Td>
+                  <Td
+                    maxW="150px"
+                    whiteSpace="nowrap"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                  >
+                    {product.product_desc}
+                  </Td>
+                  <Td>{product.price}</Td>
+                  <Td>{product.stok}</Td>
+                  <Td>
+                    <Button
+                      size={"sm"}
+                      bgColor={"#56C05A"}
+                      color={"white"}
+                      width={"40%"}
+                      borderRadius={"md"}
+                      _hover={{ bgColor: "#4cd94c" }}
+                      _active={{ bgColor: "#3f963f" }}
+                      boxShadow="0 2px 4px rgba(0, 0, 0, 0.2)"
+                      mr={2}
+                      mt={2}
+                      mb={2}
+                      fontWeight={"bold"}
+                      onClick={() => handleOpenEdit(product)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size={"sm"}
+                      bgColor={"#F74D4D"}
+                      color={"white"}
+                      borderRadius={"md"}
+                      width={"40%"}
+                      _hover={{ bgColor: "#FF6B6B" }}
+                      _active={{ bgColor: "#C62C2C" }}
+                      boxShadow="0 2px 4px rgba(0, 0, 0, 0.2)"
+                      mb={2}
+                      mt={2}
+                      fontWeight={"bold"}
+                      onClick={() => {
+                        setProductToDelete(product);
+                        onDeleteOpen();
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </TableContainer>
@@ -160,11 +217,7 @@ export function ProductForm() {
           <ModalBody>
             <AddProduct />
           </ModalBody>
-          <ModalFooter>
-            <Button bg={"#F74D4D"} _hover={{ bg: "#D63C3C" }} mr={3}>
-              Save
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
 
@@ -177,13 +230,9 @@ export function ProductForm() {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <EditProduct />
+            {selectedProduct && <EditProduct product={selectedProduct} />}
           </ModalBody>
-          <ModalFooter>
-            <Button bg={"#F74D4D"} _hover={{ bg: "#D63C3C" }} mr={3}>
-              Save
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
 
@@ -206,6 +255,7 @@ export function ProductForm() {
               _hover={{ bg: "#4cd94c" }}
               mr={3}
               width={"100px"}
+              onClick={handleDeleteProduct} 
             >
               Yes
             </Button>

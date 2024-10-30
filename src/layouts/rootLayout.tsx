@@ -1,15 +1,14 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAppSelector } from "../store";
 
 const RootLayout = () => {
+   const authState = useAppSelector((state) => state.auth);
 
-   return (
-      <Stack>
-         <Box>
-            <Outlet />
-         </Box>
-      </Stack>
-   );
+   if (!authState.token) {
+      return <Navigate to="/login" replace />;
+   }
+
+   return ( <Outlet /> );
 };
 
 export default RootLayout;

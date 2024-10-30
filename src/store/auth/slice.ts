@@ -1,17 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IUser } from "../../types/user";
 import { loginAsync, registerAsync } from "./async";
+import Cookies from "js-cookie";
+import { updateUserAsync } from "../user/async";
 
 export interface AuthState {
   token: string;
   user?: IUser;
   loading: boolean;
+  error: string | null;
 }
 
 const initialState: AuthState = {
-  token: "",
-  user: undefined,
+  token: Cookies.get("token") || "",
+  user: Cookies.get("user")
+    ? JSON.parse(Cookies.get("user") as string)
+    : undefined,
   loading: false,
+  error: null,
 };
 
 const authSlice = createSlice({
@@ -21,10 +27,11 @@ const authSlice = createSlice({
     LOGOUT(state) {
       state.token = "";
       state.user = undefined;
-      localStorage.removeItem("token");
+      state.error = null;
+      Cookies.remove("token");
+      Cookies.remove("user");
     },
   },
-
   extraReducers: (builder) => {
     builder
       .addCase(registerAsync.pending, (state) => {
@@ -35,18 +42,35 @@ const authSlice = createSlice({
       })
       .addCase(registerAsync.rejected, (state) => {
         state.loading = false;
+        state.error = "Something went wrong";
       });
 
     builder
       .addCase(loginAsync.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        Cookies.set("user", JSON.stringify(action.payload.user), {
+          expires: 7,
+        });
+        Cookies.set("token", action.payload.token, { expires: 7 });
       })
-      .addCase(loginAsync.rejected, (state) => {
+      .addCase(loginAsync.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    builder
+      .addCase(updateUserAsync.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload }; 
+        Cookies.set("user", JSON.stringify(state.user), { expires: 7 }); 
+      })
+      .addCase(updateUserAsync.rejected, (state, action) => {
+        state.error = action.payload as string;
       });
   },
 });

@@ -1,9 +1,18 @@
 import {useDispatch, useSelector} from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 
+import authReducer from "./auth/slice";
+import userReducer from "./user/slice";
+import produtReducer from "./product/slice";
+import categoryReducer from "./category/slice";
 
 const store = configureStore({
-    reducer: {},
+    reducer: {
+        auth: authReducer,
+        user: userReducer,
+        product: produtReducer,
+        category: categoryReducer
+    },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -2,6 +2,8 @@ import {
   createBrowserRouter,
   RouteObject,
   RouterProvider,
+  Navigate,
+  useLocation,
 } from "react-router-dom";
 import { ComplainAdmin } from "../features/app/adminPage/complain/admin-complain";
 import { HomeAdmin } from "../features/app/adminPage/home/home-admin";
@@ -17,66 +19,80 @@ import { RegisterForm } from "../features/auth/register/register";
 import AuthLayout from "../layouts/authLayout";
 import RootLayout from "../layouts/rootLayout";
 import { ProductAdmin } from "../features/app/adminPage/product/product";
+import Cookies from "js-cookie";
+
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRole: string[];
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }) => {
+  const token = Cookies.get("token");
+  const userRole = Cookies.get("role");
+  const location = useLocation();
+
+  if (!token) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (!allowedRole.includes(userRole || "")) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+};
 
 const routes: RouteObject[] = [
   {
     path: "/",
     element: <RootLayout />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "profile",
-        element: <Profile />,
-      },
-      {
-        path: "complain",
-        element: <Complain />,
-      },
-      {
-        path: "chart",
-        element: <Chart />,
-      },
-      {
-        path: "detail",
-        element: <Detail />,
-      },
+      { index: true, element: <Home /> },
+      { path: "profile", element: <Profile /> },
+      { path: "complain", element: <Complain /> },
+      { path: "chart", element: <Chart /> },
+      { path: "detail", element: <Detail /> },
     ],
   },
   {
     element: <AuthLayout />,
     children: [
-      {
-        path: "login",
-        element: <LoginForm />,
-      },
-      {
-        path: "register",
-        element: <RegisterForm />,
-      },
+      { path: "login", element: <LoginForm /> },
+      { path: "register", element: <RegisterForm /> },
     ],
   },
+  { path: "*", element: <ErrorRoute /> },
   {
-    path: "*",
-    element: <ErrorRoute />,
-  },
-  {
-    path: "/admin/",
-    element: <HomeAdmin />,
+    path: "/admin",
+    element: (
+      <ProtectedRoute allowedRole={["ADMIN"]}>
+        <HomeAdmin />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/admin/complain",
-    element: <ComplainAdmin />,
+    element: (
+      <ProtectedRoute allowedRole={["ADMIN"]}>
+        <ComplainAdmin />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/admin/category",
-    element: <CategoryAdmin />,
+    element: (
+      <ProtectedRoute allowedRole={["ADMIN"]}>
+        <CategoryAdmin />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/admin/product",
-    element: <ProductAdmin />,
+    element: (
+      <ProtectedRoute allowedRole={["ADMIN"]}>
+        <ProductAdmin />
+      </ProtectedRoute>
+    ),
   },
 ];
 

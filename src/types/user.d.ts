@@ -1,10 +1,10 @@
-export interface IUser{
-    id: number
-    name: string
-    email: string
-    image: string
-    phone: string
-    address: string
-    gender: 'MALE' | 'FEMALE'
-    role: 'USER' | 'ADMIN'
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  gender: string;
+  image?: string;
+  role?: string;
 }
