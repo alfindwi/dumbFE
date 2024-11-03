@@ -1,25 +1,27 @@
+import Cookies from "js-cookie";
 import {
   createBrowserRouter,
+  Navigate,
   RouteObject,
   RouterProvider,
-  Navigate,
   useLocation,
 } from "react-router-dom";
+import { CategoryAdmin } from "../features/app/adminPage/category/category";
 import { ComplainAdmin } from "../features/app/adminPage/complain/admin-complain";
 import { HomeAdmin } from "../features/app/adminPage/home/home-admin";
-import { CategoryAdmin } from "../features/app/adminPage/category/category";
+import { ProductAdmin } from "../features/app/adminPage/product/product";
 import { Complain } from "../features/app/userPage/Complain/complain";
 import { Home } from "../features/app/userPage/Home/home";
-import { Chart } from "../features/app/userPage/chart/chart";
+import { Chart } from "../features/app/userPage/cart/chart";
 import { Detail } from "../features/app/userPage/detailProduct/detailProduct";
 import { ErrorRoute } from "../features/app/userPage/errorRoute";
+import { Checkout } from "../features/app/userPage/order/checkout";
 import { Profile } from "../features/app/userPage/profile/profile";
 import { LoginForm } from "../features/auth/login/login";
 import { RegisterForm } from "../features/auth/register/register";
 import AuthLayout from "../layouts/authLayout";
 import RootLayout from "../layouts/rootLayout";
-import { ProductAdmin } from "../features/app/adminPage/product/product";
-import Cookies from "js-cookie";
+import { TransactionAdmin } from "../features/app/adminPage/transaction/transaction";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -51,7 +53,8 @@ const routes: RouteObject[] = [
       { path: "profile", element: <Profile /> },
       { path: "complain", element: <Complain /> },
       { path: "chart", element: <Chart /> },
-      { path: "detail", element: <Detail /> },
+      { path: "detail/:id", element: <Detail /> },
+      {path: "checkout", element: <Checkout />},
     ],
   },
   {
@@ -91,6 +94,14 @@ const routes: RouteObject[] = [
     element: (
       <ProtectedRoute allowedRole={["ADMIN"]}>
         <ProductAdmin />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/transaction",
+    element: (
+      <ProtectedRoute allowedRole={["ADMIN"]}>
+        <TransactionAdmin />
       </ProtectedRoute>
     ),
   },

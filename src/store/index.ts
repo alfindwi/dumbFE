@@ -5,13 +5,17 @@ import authReducer from "./auth/slice";
 import userReducer from "./user/slice";
 import produtReducer from "./product/slice";
 import categoryReducer from "./category/slice";
+import cartReducer from "./cart/slice";
+import orderReducer from "./order/slice";
 
 const store = configureStore({
     reducer: {
         auth: authReducer,
         user: userReducer,
         product: produtReducer,
-        category: categoryReducer
+        category: categoryReducer,
+        cart: cartReducer,
+        order: orderReducer
     },
 });
 

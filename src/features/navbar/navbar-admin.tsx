@@ -34,7 +34,7 @@ export function NavbarAdmin() {
           <Text
             as={Link}
             to="/admin/complain"
-            color={location.pathname === "/complain" ? "#F74D4D" : "white"}
+            color={location.pathname === "/admin/complain" ? "#F74D4D" : "white"}
             fontWeight="bold"
             _hover={{ color: "#F74D4D" }}
           >
@@ -45,7 +45,7 @@ export function NavbarAdmin() {
         <Text
           as={Link}
           to="/admin/category"
-          color={location.pathname === "/profile" ? "#F74D4D" : "white"}
+          color={location.pathname === "/admin/category" ? "#F74D4D" : "white"}
           fontWeight="bold"
           _hover={{ color: "#F74D4D" }}
         >
@@ -55,11 +55,21 @@ export function NavbarAdmin() {
         <Text
           as={Link}
           to="/admin/product" 
-          color={location.pathname === "/profile" ? "#F74D4D" : "white"}
+          color={location.pathname === "/admin/product" ? "#F74D4D" : "white"}
           fontWeight="bold"
           _hover={{ color: "#F74D4D" }}
         >
           Product
+        </Text>
+
+        <Text
+          as={Link}
+          to="/admin/transaction" 
+          color={location.pathname === "/admin/transaction" ? "#F74D4D" : "white"}
+          fontWeight="bold"
+          _hover={{ color: "#F74D4D" }}
+        >
+          Trasaction
         </Text>
 
         <Text

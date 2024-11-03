@@ -1,13 +1,14 @@
 import { Badge, Box, Flex, Icon, Img, Text } from "@chakra-ui/react";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { LOGOUT } from "../../store/auth/slice";
 import Cookies from "js-cookie";
 
 export function Navbar() {
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const {cart} = useAppSelector((state) => state.cart);
   const handleLogout = () => {
     dispatch(LOGOUT());
     Cookies.remove("token");
@@ -38,7 +39,7 @@ export function Navbar() {
               _hover={{ color: "#F74D4D" }}
               cursor="pointer"
             />
-
+          {cart && cart.length > 0 && (
             <Badge
               position="absolute"
               top="-1" 
@@ -54,8 +55,9 @@ export function Navbar() {
               justifyContent="center"
               boxShadow="0 0 4px rgba(0, 0, 0, 0.5)" 
             >
-              5
+              {cart.length}
             </Badge>
+          )}
           </Box>
         </Link>
 
