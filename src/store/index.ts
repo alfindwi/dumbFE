@@ -7,6 +7,7 @@ import produtReducer from "./product/slice";
 import categoryReducer from "./category/slice";
 import cartReducer from "./cart/slice";
 import orderReducer from "./order/slice";
+import transactionOrder from "./transaction/slice";
 
 const store = configureStore({
     reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
         product: produtReducer,
         category: categoryReducer,
         cart: cartReducer,
-        order: orderReducer
+        order: orderReducer,
+        transaction: transactionOrder
     },
 });
 

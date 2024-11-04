@@ -55,10 +55,13 @@ const cartSlice = createSlice({
         state.error = null;
       })
       .addCase(createCart.fulfilled, (state, action) => {
-        state.cart = action.payload.cartItems;
-        state.totalAmount = action.payload.totalAmount;
+        const cartData = action.payload.cartItem;
+        state.cart = cartData.cartItems;
+        state.totalAmount = cartData.totalAmount;
+        state.id = cartData.id;
         state.loading = false;
       })
+
       .addCase(createCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;

@@ -1,7 +1,23 @@
-import { Box, Button, Flex, Img, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react";
-import { useAppSelector } from "../../../../store";
+import {
+  Box,
+  Button,
+  Flex,
+  Img,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { useAppDispatch, useAppSelector } from "../../../../store";
 import { Navbar } from "../../../navbar/navbar";
 import { EditProfile } from "./edit-profile";
+import { useEffect } from "react";
+import { getOrder } from "../../../../store/order/async";
 
 export function Profile() {
   return (
@@ -13,8 +29,14 @@ export function Profile() {
 }
 
 export function ProfileUser() {
+  const dispatch = useAppDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useAppSelector((state) => state.auth);
+  const { orders } = useAppSelector((state) => state.order);
+
+  useEffect(() => {
+    dispatch(getOrder());
+  }, [dispatch]);
 
   return (
     <Flex>
@@ -22,7 +44,14 @@ export function ProfileUser() {
         <Text color="#F74D4D" fontWeight="bold" fontSize="26px">
           My Profile
         </Text>
-        <Flex ml="2%" mt={4} gap={2} wrap="wrap" justifyContent="flex-start" height="100%">
+        <Flex
+          ml="2%"
+          mt={4}
+          gap={2}
+          wrap="wrap"
+          justifyContent="flex-start"
+          height="100%"
+        >
           <Flex>
             <Box mt={2} w="250px">
               <Img
@@ -93,36 +122,44 @@ export function ProfileUser() {
         <Text color="#F74D4D" fontWeight="bold" fontSize="26px">
           My Transaction
         </Text>
-        <Flex>
-          <Box bg="#212121" height="190px" w="100%" mt={4} p={3}>
-            <Flex height="100%">
-              <Img
-                w="120px"
-                h="160px"
-                padding="10px"
-                src="https://row.hyperx.com/cdn/shop/products/hyperx_alloy_core_rgb_es_1_top_down_1600x.jpg?v=1664011586"
-                objectFit="cover"
-              />
-              <Box ml={2} mt={3}>
-                <Text color="#F74D4D" fontWeight="bold" fontSize="16px">
-                  Mouse
-                </Text>
-                <Text color="#F74D4D" fontSize="12px" fontWeight="light">
-                  <span style={{ fontWeight: "semibold" }}>Saturday</span>, 3 March 2022
-                </Text>
-                <Text color="white" fontSize="12px" mt={2}>
-                  Price : Rp.500.000
-                </Text>
-                <Text color="white" fontSize="15px" mt="30%" fontWeight="bold">
-                  Sub Total: Rp.500.000
-                </Text>
-              </Box>
-              <Box textAlign="center" mt="50px" ml="260px">
-                <Img w="100%" h="70px" src="/src/assets/logo.svg" />
-              </Box>
-            </Flex>
-          </Box>
-        </Flex>
+        {orders.map((order) => (
+          <Flex>
+            <Box bg="#212121" height="190px" w="100%" mt={4} p={3}>
+              <Flex height="100%">
+                <Img
+                  w="120px"
+                  h="160px"
+                  padding="10px"
+                  src="https://row.hyperx.com/cdn/shop/products/hyperx_alloy_core_rgb_es_1_top_down_1600x.jpg?v=1664011586"
+                  objectFit="cover"
+                />
+                <Box ml={2} mt={3}>
+                  <Text color="#F74D4D" fontWeight="bold" fontSize="16px">
+                    Mouse
+                  </Text>
+                  <Text color="#F74D4D" fontSize="12px" fontWeight="light">
+                    <span style={{ fontWeight: "semibold" }}>Saturday</span>, 3
+                    March 2022
+                  </Text>
+                  <Text color="white" fontSize="12px" mt={2}>
+                    Price : Rp.500.000
+                  </Text>
+                  <Text
+                    color="white"
+                    fontSize="15px"
+                    mt="30%"
+                    fontWeight="bold"
+                  >
+                    Sub Total: Rp.500.000
+                  </Text>
+                </Box>
+                <Box textAlign="center" mt="50px" ml="260px">
+                  <Img w="100%" h="70px" src="/src/assets/logo.svg" />
+                </Box>
+              </Flex>
+            </Box>
+          </Flex>
+        ))}
       </Box>
 
       {/* Edit Profile Modal */}
@@ -134,10 +171,9 @@ export function ProfileUser() {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <EditProfile/>
+            <EditProfile />
           </ModalBody>
-          <ModalFooter>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </Flex>

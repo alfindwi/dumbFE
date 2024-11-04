@@ -1,12 +1,23 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { NavbarAdmin } from "../../../navbar/navbar-admin";
-import { Line, Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+import { Line, Pie, Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-// Register required elements for Line and Pie charts
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
+// Register required elements for Line, Pie, and Bar charts
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
 
-const data = {
+const lineData = {
   labels: ['January', 'February', 'March', 'April', 'May'],
   datasets: [
     {
@@ -28,7 +39,7 @@ const data = {
   ],
 };
 
-const circleData = {
+const pieData = {
   labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
   datasets: [
     {
@@ -36,6 +47,19 @@ const circleData = {
       data: [12, 19, 3, 5, 2, 3],
       borderWidth: 1,
       backgroundColor: ['#CB4335', '#1F618D', '#F1C40F', '#27AE60', '#884EA0', '#D35400'],
+    },
+  ],
+};
+
+const barData = {
+  labels: ['Product A', 'Product B', 'Product C', 'Product D'],
+  datasets: [
+    {
+      label: 'Units Sold',
+      data: [150, 200, 120, 180],
+      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 1,
     },
   ],
 };
@@ -65,6 +89,18 @@ const pieOptions = {
   },
 };
 
+const barOptions = {
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Units Sold by Product',
+    },
+  },
+};
+
 export function HomeAdmin() {
   return (
     <Box h="100vh" bg="black">
@@ -76,18 +112,46 @@ export function HomeAdmin() {
 
 const DashboardContent = () => (
   <Flex
+    direction="column"
     color="white"
     w="100%"
     h="100vh"
-    bgColor={"navy"}
     justifyContent="center"
     alignItems="center"
+    gap={5}
+    p={4}
   >
     <Box w="500px" h="300px" p={4} bg="#1c1c1c" borderRadius="md">
-      <Line data={data} options={options} />
+      <Line data={lineData} options={options} />
     </Box>
-    <Box w="500px" flexDirection={"column"} ml={5} h="300px" p={4} bg="#1c1c1c" borderRadius="md">
-      <Pie data={circleData} options={pieOptions} />
-    </Box>
+
+    <Flex gap={5}>
+      <Box
+        w="300px"
+        h="300px"
+        p={4}
+        bg="#1c1c1c"
+        borderRadius="md"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Pie data={pieData} options={pieOptions} />
+      </Box>
+
+      {/* Bar Chart */}
+      <Box
+        w="300px"
+        h="300px"
+        p={4}
+        bg="#1c1c1c"
+        borderRadius="md"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Bar data={barData} options={barOptions} />
+      </Box>
+    </Flex>
   </Flex>
 );

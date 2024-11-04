@@ -1,17 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IOrder } from "../../types/order";
 import { createOrder, getOrder } from "./async";
 
-interface orderState {
-  orders: IOrder[];
+interface OrderState {
+  orders: { id: number; userId: number; status: string; totalAmount: number }[]; 
   loading: boolean;
   error: string | null;
+  transaction: {
+    token: string;
+    redirect_url: string;
+  } | null;
 }
 
-const initialState: orderState = {
+const initialState: OrderState = {
   orders: [],
   loading: false,
   error: null,
+  transaction: null,
 };
 
 const orderSlice = createSlice({
@@ -19,13 +23,13 @@ const orderSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    // get order
+    // Get order
     builder
       .addCase(getOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getOrder.fulfilled, (state, action: PayloadAction<IOrder[]>) => {
+      .addCase(getOrder.fulfilled, (state, action: PayloadAction<OrderState["orders"]>) => {
         state.orders = action.payload;
         state.loading = false;
       })
@@ -34,20 +38,20 @@ const orderSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    //   create order
+    // Create order
     builder
       .addCase(createOrder.pending, (state) => {
-          state.loading = true;
-          state.error = null;
+        state.loading = true;
+        state.error = null;
       })
-      .addCase(createOrder.fulfilled, (state, action: PayloadAction<IOrder>) => {
-          state.orders.push(action.payload);
-          state.loading = false;
+      .addCase(createOrder.fulfilled, (state, action: PayloadAction<{ token: string; redirect_url: string }>) => {
+        state.transaction = action.payload;
+        state.loading = false;
       })
       .addCase(createOrder.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload as string;
-      })
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

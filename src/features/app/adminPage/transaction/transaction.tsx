@@ -7,9 +7,12 @@ import {
   Text,
   Th,
   Thead,
-  Tr
+  Tr,
 } from "@chakra-ui/react";
 import { NavbarAdmin } from "../../../navbar/navbar-admin";
+import { useAppDispatch, useAppSelector } from "../../../../store";
+import { getTransaction } from "../../../../store/transaction/async";
+import { useEffect } from "react";
 
 export function TransactionAdmin() {
   return (
@@ -20,15 +23,21 @@ export function TransactionAdmin() {
   );
 }
 
-
 export function TransactionForm() {
+  const dipatch = useAppDispatch();
+
+  const { order } = useAppSelector((state) => state.transaction);
+
+  useEffect(() => {
+    dipatch(getTransaction());
+  }, [dipatch]);
 
   return (
     <>
       <Box h={"100vh"} bg={"black"} p={9}>
-          <Text color={"white"} mb={5} fontSize={"25px"} fontWeight={"bold"}>
-            Transaction Order
-          </Text>
+        <Text color={"white"} mb={5} fontSize={"25px"} fontWeight={"bold"}>
+          Transaction Order
+        </Text>
         <TableContainer>
           <Table size="sm">
             <Thead bg={"#303030"}>
@@ -40,16 +49,17 @@ export function TransactionForm() {
                 <Th color={"white"}>Payment Status</Th>
               </Tr>
             </Thead>
-            <Tbody bg={"#232323"}>
+            {order.map((item, index) => (
+              <Tbody bg={"#232323"}>
                 <Tr>
-                  <Td>{1}</Td>
+                  <Td>{index + 1}</Td>
                   <Td
                     maxW="150px"
                     whiteSpace="nowrap"
                     overflow="hidden"
                     textOverflow="ellipsis"
                   >
-                    alvin dwi 
+                    {item.user.name}
                   </Td>
                   <Td
                     maxW="150px"
@@ -57,7 +67,7 @@ export function TransactionForm() {
                     overflow="hidden"
                     textOverflow="ellipsis"
                   >
-                    Morfem x Teenage Death Star - Makan Tuh Skill
+                    {item.OrderItems.map((item) => item.product.product_name)}
                   </Td>
                   <Td
                     maxW="150px"
@@ -65,11 +75,12 @@ export function TransactionForm() {
                     overflow="hidden"
                     textOverflow="ellipsis"
                   >
-                    Rp. 200.000
+                    {item.totalAmount}
                   </Td>
-                  <Td>PENDING</Td>
+                  <Td>{item.status}</Td>
                 </Tr>
-            </Tbody>
+              </Tbody>
+            ))}
           </Table>
         </TableContainer>
       </Box>

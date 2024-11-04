@@ -65,7 +65,6 @@ export function ChartForm() {
   
     navigate("/checkout");
   };
-  
 
   useEffect(() => {
     dispatch(getCart());

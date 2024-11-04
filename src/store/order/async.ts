@@ -37,17 +37,15 @@ export const createOrder = createAsyncThunk(
         },
       });
 
-      // Log respons untuk memastikan formatnya
-      console.log("API Response:", res.data);
-
       if (res.data.transaction) {
-        // Mengembalikan token sebagai bagian dari objek
-        return { token: res.data.transaction.token }; 
+        return {
+          token: res.data.transaction.token,
+          redirect_url: res.data.transaction.redirect_url,
+        };
       } else {
         return thunkAPI.rejectWithValue("Transaction data is missing.");
       }
     } catch (error: AxiosError | any) {
-      console.log(error);
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
