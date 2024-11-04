@@ -18,26 +18,33 @@ import {
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
 
 const lineData = {
-  labels: ['January', 'February', 'March', 'April', 'May'],
+  labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
   datasets: [
     {
-      label: 'Sales Q1',
-      data: [30, 45, 60, 75, 90],
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      borderColor: 'rgba(75, 192, 192, 1)',
-      borderWidth: 2,
-      fill: true,
-    },
-    {
-      label: 'Sales Q2',
-      data: [10, 15, 60, 75, 90],
-      backgroundColor: 'rgba(153, 102, 255, 0.2)',
-      borderColor: 'rgba(153, 102, 255, 1)',
+      label: 'Pengguna Baru per Bulan',
+      data: [50, 75, 60, 80, 90, 120, 110, 130, 95, 100, 85, 150], // Jumlah pengguna baru yang mendaftar setiap bulan
+      borderColor: 'rgba(54, 162, 235, 1)',
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
       borderWidth: 2,
       fill: true,
     },
   ],
 };
+
+const lineOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Jumlah Pengguna Baru yang Mendaftar per Bulan',
+    },
+  },
+};
+
+
 
 const pieData = {
   labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
@@ -52,17 +59,73 @@ const pieData = {
 };
 
 const barData = {
-  labels: ['Product A', 'Product B', 'Product C', 'Product D'],
+  labels: ['batik barca', 'baju mu'], // Product names
   datasets: [
     {
-      label: 'Units Sold',
-      data: [150, 200, 120, 180],
+      label: 'Initial Stock',
+      data: [222, 444],
+      backgroundColor: 'rgba(75, 192, 192, 0.6)',
+      borderColor: 'rgba(75, 192, 192, 1)',
+      borderWidth: 1,
+    },
+    {
+      label: 'Quantity Sold',
+      data: [200, 300],
+      backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      borderColor: 'rgba(255, 99, 132, 1)',
+      borderWidth: 1,
+    },
+    {
+      label: 'Remaining Stock',
+      data: [214, 439],
       backgroundColor: 'rgba(54, 162, 235, 0.6)',
       borderColor: 'rgba(54, 162, 235, 1)',
       borderWidth: 1,
     },
   ],
 };
+
+
+const barOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+      labels: {
+        color: '#ffffff', // Change legend text color to white
+      },
+    },
+    title: {
+      display: true,
+      text: 'Stock and Sales Data by Product',
+      color: '#ffffff', // Title color
+      font: {
+        size: 18,
+      },
+    },
+  },
+  scales: {
+    x: {
+      ticks: {
+        color: '#ffffff', // X-axis label color
+      },
+      grid: {
+        display: false, // Hide gridlines on x-axis for a cleaner look
+      },
+    },
+    y: {
+      beginAtZero: true,
+      ticks: {
+        color: '#ffffff', // Y-axis label color
+      },
+      grid: {
+        color: 'rgba(255, 255, 255, 0.2)', // Lighter gridline color on y-axis
+      },
+    },
+  },
+};
+
+
 
 const options = {
   responsive: true,
@@ -89,17 +152,6 @@ const pieOptions = {
   },
 };
 
-const barOptions = {
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Units Sold by Product',
-    },
-  },
-};
 
 export function HomeAdmin() {
   return (
@@ -122,7 +174,7 @@ const DashboardContent = () => (
     p={4}
   >
     <Box w="500px" h="300px" p={4} bg="#1c1c1c" borderRadius="md">
-      <Line data={lineData} options={options} />
+      <Line data={lineData} options={lineOptions} />
     </Box>
 
     <Flex gap={5}>

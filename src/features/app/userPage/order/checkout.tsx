@@ -14,7 +14,6 @@ export function Checkout() {
     </Box>
   );
 }
-
 export function CheckOutForm() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
@@ -33,19 +32,18 @@ export function CheckOutForm() {
       console.log("No cart items to process.");
       return;
     }
-  
+
     try {
-      // Mendapatkan token dari hasil dispatch
-      const { token } = await dispatch(createOrder({ cartId: cartId ?? 0 })).unwrap();
-      
-      // Pastikan token tidak undefined
+      const { token } = await dispatch(
+        createOrder({ cartId: cartId ?? 0 })
+      ).unwrap();
+
       if (!token) {
         throw new Error("Transaction Token is undefined");
       }
-  
+
       console.log("Transaction Token:", token);
-  
-      // Panggil window.snap.pay dengan token yang didapat
+
       window.snap.pay(token, {
         onSuccess: function () {
           console.log("Payment success");
@@ -61,7 +59,6 @@ export function CheckOutForm() {
       console.log("Payment error:", error);
     }
   };
-  
 
   return (
     <Box>
@@ -124,115 +121,106 @@ export function CheckOutForm() {
             </Flex>
           </Box>
 
-          {cart?.map(
-            (order) => (
-              console.log(cartId),
-              (
-                <Box
-                  key={order.id}
-                  bg={"#212121"}
-                  w={"87%"}
-                  ml={"5%"}
-                  p={5}
-                  mt={4}
-                  mb={4}
-                  borderRadius="md"
+          <Box
+            bg={"#212121"}
+            w={"87%"}
+            ml={"5%"}
+            p={5}
+            mt={4}
+            mb={4}
+            borderRadius="md"
+          >
+            <Flex align="center" justify="space-between" mb={3}>
+              <Text color={"white"} fontWeight={"bold"} fontSize={"20px"}>
+                Ordered Products
+              </Text>
+              <Flex justify="space-between" w="50%">
+                <Text
+                  color={"white"}
+                  fontWeight={"bold"}
+                  fontSize={"17px"}
+                  textAlign="center"
                 >
-                  <Flex align="center" justify="space-between" mb={3}>
-                    <Text color={"white"} fontWeight={"bold"} fontSize={"20px"}>
-                      Ordered Products
+                  Product Price
+                </Text>
+                <Text
+                  color={"white"}
+                  fontWeight={"bold"}
+                  fontSize={"17px"}
+                  textAlign="center"
+                >
+                  Quantity
+                </Text>
+                <Text
+                  color={"white"}
+                  fontWeight={"bold"}
+                  fontSize={"17px"}
+                  textAlign="center"
+                >
+                  Total Price
+                </Text>
+              </Flex>
+            </Flex>
+
+            <Box mt={3}>
+              {cart.map((item) => (
+                <Flex
+                  key={item.id}
+                  mt={3}
+                  ml={1}
+                  align="center"
+                  justify="space-between"
+                  w="100%"
+                >
+                  <Flex align="center" w="50%">
+                    <Img
+                      src={item.product?.image}
+                      w={"70px"}
+                      h={"60px"}
+                      mr={4}
+                    />
+                    <Text
+                      color={"white"}
+                      fontWeight={"semibold"}
+                      w={"76%"}
+                      fontSize={"15px"}
+                    >
+                      {item.product?.product_name}
                     </Text>
-                    <Flex justify="space-between" w="50%">
-                      <Text
-                        color={"white"}
-                        fontWeight={"bold"}
-                        fontSize={"17px"}
-                        textAlign="center"
-                      >
-                        Product Price
-                      </Text>
-                      <Text
-                        color={"white"}
-                        fontWeight={"bold"}
-                        fontSize={"17px"}
-                        textAlign="center"
-                      >
-                        Quantity
-                      </Text>
-                      <Text
-                        color={"white"}
-                        fontWeight={"bold"}
-                        fontSize={"17px"}
-                        textAlign="center"
-                      >
-                        Total Price
-                      </Text>
-                    </Flex>
                   </Flex>
+                  <Flex w="50%" justify="space-between">
+                    <Text color={"white"}>{`Rp. ${item.productPrice}`}</Text>
+                    <Text color={"white"}>{item.quantity}</Text>
+                    <Text color={"white"}>{`Rp. ${item.totalPrice}`}</Text>
+                  </Flex>
+                </Flex>
+              ))}
+            </Box>
 
-                  <Box mt={3}>
-                    {cart?.map((item) => (
-                      <Flex
-                        key={item.id}
-                        mt={3}
-                        ml={1}
-                        align="center"
-                        justify="space-between"
-                        w="100%"
-                      >
-                        <Flex align="center" w="50%">
-                          <Img
-                            src={item.product?.image}
-                            w={"70px"}
-                            h={"60px"}
-                            mr={4}
-                          />
-                          <Text
-                            color={"white"}
-                            fontWeight={"semibold"}
-                            w={"76%"}
-                            fontSize={"15px"}
-                          >
-                            {item.product?.product_name}
-                          </Text>
-                        </Flex>
-                        <Flex w="50%" justify="space-between">
-                          <Text
-                            color={"white"}
-                          >{`Rp. ${item.productPrice}`}</Text>
-                          <Text color={"white"}>{item.quantity}</Text>
-                          <Text
-                            color={"white"}
-                          >{`Rp. ${item.totalPrice}`}</Text>
-                        </Flex>
-                      </Flex>
-                    ))}
-                  </Box>
+            <Divider borderColor="gray.600" my={4} />
 
-                  <Divider borderColor="gray.600" my={4} />
-
-                  <Text
-                    fontWeight={"bold"}
-                    color={"white"}
-                    mt={5}
-                    textAlign={"right"}
-                    fontSize={"20px"}
-                  >
-                    Total Payment
-                  </Text>
-                  <Text
-                    fontWeight={"bold"}
-                    color={"white"}
-                    mt={5}
-                    textAlign={"right"}
-                    fontSize={"20px"}
-                  >
-                    {`Rp. ${order.totalPrice}`}
-                  </Text>
-                </Box>
-              )
-            )
-          )}
+            <Text
+              fontWeight={"bold"}
+              color={"white"}
+              mt={5}
+              textAlign={"right"}
+              fontSize={"20px"}
+            >
+              Total Payment
+            </Text>
+            <Text
+              fontWeight={"bold"}
+              color={"white"}
+              mt={5}
+              textAlign={"right"}
+              fontSize={"20px"}
+            >
+              {`Rp. ${cart.reduce(
+                (total, item) => total + item.totalPrice,
+                0
+              )}`}
+            </Text>
+          </Box>
         </>
       )}
 
