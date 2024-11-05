@@ -43,6 +43,7 @@ export function AddCategory() {
       } else {
         throw new Error("Failed to add category");
       }
+
     } catch (error) {
       toast({
         title: "An error occurred.",

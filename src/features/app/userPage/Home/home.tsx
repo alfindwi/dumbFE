@@ -1,10 +1,10 @@
-import { Box, Button, Flex, Img, Text, useAnimationState } from "@chakra-ui/react";
-import { Navbar } from "../../../navbar/navbar";
+import { Box, Button, Flex, Img, Text } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { useEffect } from "react";
-import { getProducts } from "../../../../store/product/async";
 import { createCart } from "../../../../store/cart/async";
+import { getProducts } from "../../../../store/product/async";
+import { Navbar } from "../../../navbar/navbar";
 
 export function Home() {
   return (

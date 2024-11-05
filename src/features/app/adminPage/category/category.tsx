@@ -20,13 +20,13 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { NavbarAdmin } from "../../../navbar/navbar-admin";
-import { EditCategory } from "./edit-category";
-import { useAppDispatch, useAppSelector } from "../../../../store";
-import { AddCategory } from "./add-category";
 import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../../store";
 import { deleteCategory, getCategory } from "../../../../store/category/async";
 import { ICategory } from "../../../../types/category";
+import { NavbarAdmin } from "../../../navbar/navbar-admin";
+import { AddCategory } from "./add-category";
+import { EditCategory } from "./edit-category";
 
 export function CategoryAdmin() {
   return (
@@ -56,7 +56,7 @@ export function CategoryForm() {
     onClose: onAddClose,
   } = useDisclosure();
 
-  const { category, loading, error } = useAppSelector((state) => state.category);
+  const { category } = useAppSelector((state) => state.category);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<ICategory| null>(null);
 

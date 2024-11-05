@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../../libs/api";
 import Cookies from "js-cookie";
-import { AxiosError } from "axios";
 
 export const getTransaction = createAsyncThunk(
   "transaction/getTransaction",

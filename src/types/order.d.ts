@@ -1,7 +1,7 @@
 import { IProduct } from "./product";
 import { IUser } from "./user";
 
-interface OrderItemDTO {
+interface OrderItemsDTO {
   id: number;
   orderId: number;
   productId: number;
@@ -20,5 +20,6 @@ export interface IOrder {
   totalAmount: number;
   createdAt: Date;
   updatedAt: Date;
-  OrderItems: OrderItemDTO[];
+  OrderItems: OrderItemsDTO[]; 
 }
+

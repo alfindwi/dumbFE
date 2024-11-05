@@ -118,42 +118,36 @@ export function ProfileUser() {
         </Flex>
       </Box>
 
-      <Box ml="10px" maxW="100%" mt="20px" height="100%">
+      <Box ml="100px" maxW="100%" mt="20px" height="100%">
         <Text color="#F74D4D" fontWeight="bold" fontSize="26px">
           My Transaction
         </Text>
         {orders.map((order) => (
           <Flex>
-            <Box bg="#212121" height="190px" w="100%" mt={4} p={3}>
-              <Flex height="100%">
+            <Box bg="#212121" height="100%" borderRadius="md" w="100%" mt={4} p={3}>
+              <Flex height="100%" alignItems="center">
                 <Img
                   w="120px"
                   h="160px"
                   padding="10px"
-                  src="https://row.hyperx.com/cdn/shop/products/hyperx_alloy_core_rgb_es_1_top_down_1600x.jpg?v=1664011586"
+                  src={order.OrderItems[0].product.image}
                   objectFit="cover"
                 />
-                <Box ml={2} mt={3}>
-                  <Text color="#F74D4D" fontWeight="bold" fontSize="16px">
-                    Mouse
+                <Box ml={4} mt={3} flex="1">
+                  <Text color="#F74D4D" fontWeight="bold" fontSize="16px" maxW={"400px"}>
+                    {order.OrderItems[0].product.product_name}
                   </Text>
                   <Text color="#F74D4D" fontSize="12px" fontWeight="light">
-                    <span style={{ fontWeight: "semibold" }}>Saturday</span>, 3
-                    March 2022
+                    {new Date(order.createdAt).toDateString()}
                   </Text>
                   <Text color="white" fontSize="12px" mt={2}>
-                    Price : Rp.500.000
+                    Price: Rp. {order.OrderItems[0].product.price}
                   </Text>
-                  <Text
-                    color="white"
-                    fontSize="15px"
-                    mt="30%"
-                    fontWeight="bold"
-                  >
-                    Sub Total: Rp.500.000
+                  <Text color="white" fontSize="15px" mt={2} fontWeight="bold">
+                    Sub Total: Rp. {order.totalAmount}
                   </Text>
                 </Box>
-                <Box textAlign="center" mt="50px" ml="260px">
+                <Box textAlign="center" mt={2}>
                   <Img w="100%" h="70px" src="/src/assets/logo.svg" />
                 </Box>
               </Flex>

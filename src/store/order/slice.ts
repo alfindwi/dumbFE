@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createOrder, getOrder } from "./async";
+import { IOrder } from "../../types/order";
 
 interface OrderState {
-  orders: { id: number; userId: number; status: string; totalAmount: number }[]; 
+  orders: IOrder[]; 
   loading: boolean;
   error: string | null;
   transaction: {
