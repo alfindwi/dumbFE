@@ -11,8 +11,12 @@ import {
 import { Navbar } from "../../../navbar/navbar";
 import { IoMdSend } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { useEffect } from "react";
-import { getMessage } from "../../../../store/chat/async";
+import { useEffect, useState } from "react";
+import { getMessage, getOrCreateRoom } from "../../../../store/chat/async";
+import { getUserAsync } from "../../../../store/user/async";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:3000");
 
 export function Complain() {
   return (
@@ -26,13 +30,53 @@ export function Complain() {
 export function ComplainForm() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const { messages, loading } = useAppSelector((state) => state.chat);
+  const { messages, loading, room, allUser } = useAppSelector(
+    (state) => state.chat
+  );
+
+
+  const handleRoomChange = async (newRoomId: number) => {
+    const existingRoom = Array.isArray(room)
+      ? room.find((r) => r.id === newRoomId)
+      : undefined;
+
+    if (existingRoom) {
+      dispatch(getMessage({ roomId: newRoomId }));
+    } else if (user?.id) {
+      const adminId = user.role === "ADMIN" ? user.id : newRoomId;
+      const userId = user.role === "USER" ? user.id : newRoomId;
+
+      await dispatch(getOrCreateRoom({ userId, adminId }));
+    }
+  };
 
   useEffect(() => {
-    dispatch(getMessage({ roomId: 3 })); // Menyesuaikan roomId
+    dispatch(getUserAsync());
   }, [dispatch]);
 
-    
+  // Filter pengguna sesuai dengan peran
+  const filteredUsers = Array.isArray(allUser)
+    ? user?.role === "ADMIN"
+      ? allUser.filter((usr) => usr.role === "USER")
+      : allUser.filter((usr) => usr.role === "ADMIN")
+    : [];
+
+  const currentRoomId = room[0]?.id;
+
+  useEffect(() => {
+    if (currentRoomId) {
+      dispatch(getMessage({ roomId: currentRoomId }));
+    }
+  }, [dispatch, currentRoomId]);
+
+  const currentMessages = Array.isArray(messages)
+  ? messages.filter((msg) => {
+      return msg.roomId === currentRoomId;  // Filter berdasarkan roomId
+    })
+  : [];
+
+
+
   return (
     <>
       {/* Sidebar */}
@@ -46,17 +90,29 @@ export function ComplainForm() {
         p={4}
         overflowY="auto"
       >
-        <Flex alignItems="center" mt="40%" gap={3}>
-          <Avatar size="md" name="Admin" src="/src/assets/kucing.jpg" />
-          <Box maxW="70%">
-            <Text fontSize="16px" fontWeight="bold">
-              Admin
-            </Text>
-            <Text fontSize="10px" color="#ABABAB" isTruncated>
-              apa woi dwodwodbqoudbqoudbqwdouqwbddwdwdwdqdqdwqdwqdwqdwqdq
-            </Text>
-          </Box>
-        </Flex>
+        <Box mt="30%">
+          {filteredUsers.map((r) => (
+            <Flex
+              key={r.id}
+              alignItems="center"
+              gap={3}
+              mb="20px"
+              onClick={() => handleRoomChange(r.id)}
+              cursor="pointer"
+            >
+              <Avatar size="md" name={r.name} src={r.image} />
+              <Box maxW="70%">
+                <Text fontSize="16px" fontWeight="bold">
+                  {r.name || "Admin"}
+                </Text>
+                <Text fontSize="10px" color="#ABABAB" isTruncated>
+                  {currentMessages.find((m) => m.senderId === r.id)?.content ||
+                    "No messages yet"}
+                </Text>
+              </Box>
+            </Flex>
+          ))}
+        </Box>
       </Box>
 
       {/* Main Chat Area */}
@@ -71,16 +127,20 @@ export function ComplainForm() {
         <Flex direction="column" gap={4} overflowY="auto" flexGrow={1}>
           {loading ? (
             <Text>Loading...</Text>
-          ) : (
-            messages.map((msg) => (
+          ) : Array.isArray(messages) && messages.length > 0 ? (
+            messages!.map((msg) => (
               <Flex
                 key={msg.id}
                 align="flex-start"
-                gap={2} // kurangi gap untuk mendekatkan avatar dan bubble
+                gap={2}
                 justify={msg.senderId === user?.id ? "flex-end" : "flex-start"}
               >
                 {msg.senderId !== user?.id && (
-                  <Avatar size="sm" src="/src/assets/kucing.jpg" name="Admin" />
+                  <Avatar
+                    size="sm"
+                    src={allUser.find((usr) => usr.id === msg.senderId)?.image}
+                    name="Admin"
+                  />
                 )}
                 <Box
                   bg={msg.senderId === user?.id ? "#262626" : "#575757"}
@@ -106,6 +166,8 @@ export function ComplainForm() {
                 )}
               </Flex>
             ))
+          ) : (
+            null
           )}
         </Flex>
 

@@ -74,6 +74,7 @@ export function Card() {
                 fontWeight={"bold"}
                 fontSize={"20px"}
                 wordBreak="break-word"
+                isTruncated
               >
                 {product.product_name}
               </Text>

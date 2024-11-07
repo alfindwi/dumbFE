@@ -31,14 +31,34 @@ export const updateUserAsync = createAsyncThunk<
       },
     });
 
-   const updateUser = res.data.user
+    const updateUser = res.data.user;
 
     Cookies.set("user", JSON.stringify(updateUser), { expires: 7 });
 
-    return updateUser
+    return updateUser;
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Something went wrong";
     return thunkAPI.rejectWithValue(errorMessage);
   }
 });
+
+export const getUserAsync = createAsyncThunk(
+  "user/getUser",
+  async (_, thunkAPI) => {
+    try {
+      const res = await api.get("/user");
+
+      return res.data.user; // Pastikan respons data adalah array user
+    } catch (error) {
+      // Menangani error dengan lebih detail
+      const errorMessage =
+        (error as any).response?.data?.message ||  // jika API mengirimkan error message di dalam respons
+        (error as any).message || // jika menggunakan error objek standar
+        "Something went wrong";  // fallback
+
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+

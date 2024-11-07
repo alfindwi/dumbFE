@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IUser } from "../../types/user";
-import { updateUserAsync } from "./async";
+import { getUserAsync, updateUserAsync } from "./async";
 
 export interface UserState {
   user: IUser;
@@ -29,6 +29,21 @@ const userSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateUserAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(getUserAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(getUserAsync.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.loading = false;
+      })
+
+      .addCase(getUserAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
