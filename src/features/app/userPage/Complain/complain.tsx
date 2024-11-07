@@ -11,12 +11,11 @@ import {
 import { Navbar } from "../../../navbar/navbar";
 import { IoMdSend } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getMessage, getOrCreateRoom } from "../../../../store/chat/async";
 import { getUserAsync } from "../../../../store/user/async";
 import { io } from "socket.io-client";
-
-const socket = io("http://localhost:3000");
+import { addMessage } from "../../../../store/chat/slice";
 
 export function Complain() {
   return (
@@ -30,10 +29,17 @@ export function Complain() {
 export function ComplainForm() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const { messages, loading, room, allUser } = useAppSelector(
+  const { loading, room, allUser } = useAppSelector(
     (state) => state.chat
   );
 
+  const messages = useAppSelector((state) => state.chat.messages);
+
+  const socket = useMemo(() => {
+    return io("http://localhost:3000");
+  }, []);
+
+  const [newMessage, setNewMessage] = useState("");
 
   const handleRoomChange = async (newRoomId: number) => {
     const existingRoom = Array.isArray(room)
@@ -50,32 +56,57 @@ export function ComplainForm() {
     }
   };
 
+  const currentRoomId = room[0]?.id;
+
   useEffect(() => {
     dispatch(getUserAsync());
-  }, [dispatch]);
+  
+    socket.on("chat message", (msg) => {
+      console.log("New message received:", msg); // Log untuk cek pesan diterima
+      if (msg.roomId === currentRoomId) {
+        dispatch(addMessage(msg));
+      }
+    });
+  
+    return () => {
+      socket.off("chat message");
+    };
+  }, [dispatch, currentRoomId]);
 
-  // Filter pengguna sesuai dengan peran
   const filteredUsers = Array.isArray(allUser)
     ? user?.role === "ADMIN"
       ? allUser.filter((usr) => usr.role === "USER")
       : allUser.filter((usr) => usr.role === "ADMIN")
     : [];
 
-  const currentRoomId = room[0]?.id;
-
   useEffect(() => {
     if (currentRoomId) {
       dispatch(getMessage({ roomId: currentRoomId }));
+      socket.emit("join room", currentRoomId);
     }
   }, [dispatch, currentRoomId]);
 
+  const sendMessage = () => {
+    if (newMessage.trim() && currentRoomId && user) {
+      const message = {
+        userId: user.id,
+        roomId: currentRoomId,
+        content: newMessage,
+      };
+
+      // Emit the message to the server
+      socket.emit("chat message", message);
+
+      // Reset message input
+      setNewMessage("");
+    }
+  };
+
   const currentMessages = Array.isArray(messages)
-  ? messages.filter((msg) => {
-      return msg.roomId === currentRoomId;  // Filter berdasarkan roomId
-    })
-  : [];
-
-
+    ? messages.filter((msg) => {
+        return msg.roomId === currentRoomId; // Filter berdasarkan roomId
+      })
+    : [];
 
   return (
     <>
@@ -166,9 +197,7 @@ export function ComplainForm() {
                 )}
               </Flex>
             ))
-          ) : (
-            null
-          )}
+          ) : null}
         </Flex>
 
         {/* Input for sending messages */}
@@ -180,9 +209,12 @@ export function ComplainForm() {
             borderRadius="full"
             color="white"
             p={4}
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && sendMessage()}
           />
           <InputRightElement>
-            <Icon as={IoMdSend} color="#878787" cursor="pointer" />
+            <Icon as={IoMdSend} color="#878787" cursor="pointer" onClick={sendMessage} />
           </InputRightElement>
         </InputGroup>
       </Box>

@@ -5,7 +5,7 @@ import { AxiosError } from "axios";
 
 declare global {
   interface Window {
-    snap: any
+    snap: any;
   }
 }
 
@@ -51,5 +51,14 @@ export const createOrder = createAsyncThunk(
   }
 );
 
-
-
+export const updatePayemntStatus = createAsyncThunk(
+  "order/updatePayemntStatus",
+  async (data: { orderId: number; status: string }, thunkAPI) => {
+    try {
+      const res = await api.get(`/order/payment/status/${data.orderId}`);
+      return res.data;
+    } catch (error: AxiosError | any) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);

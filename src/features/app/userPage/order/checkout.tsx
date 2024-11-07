@@ -3,7 +3,7 @@ import { Navbar } from "../../../navbar/navbar";
 import { FaLocationDot } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { useEffect } from "react";
-import { createOrder, getOrder } from "../../../../store/order/async";
+import { createOrder, getOrder, updatePayemntStatus } from "../../../../store/order/async";
 import { getCart } from "../../../../store/cart/async";
 
 export function Checkout() {
@@ -45,14 +45,29 @@ export function CheckOutForm() {
       console.log("Transaction Token:", token);
 
       window.snap.pay(token, {
-        onSuccess: function () {
+        onSuccess: async function (result: any) {
           console.log("Payment success");
+          try {
+            await dispatch(updatePayemntStatus({orderId: result.order_id, status: "SUCCESS"}))
+          } catch (error) {
+            console.log("Error updating payment status:", error);
+          }
         },
-        onPending: function () {
+        onPending: async function (result : any) {
           console.log("Transaction pending");
+          try {
+            await dispatch(updatePayemntStatus({orderId: result.order_id, status: "PENDING"}))
+          } catch (error) {
+            console.log("Error updating payment status:", error);
+          }
         },
-        onError: function () {
+        onError: async function (result: any) {
           console.log("Payment failed");
+          try {
+            await dispatch(updatePayemntStatus({orderId: result.order_id, status: "CANCEL"}))
+          } catch (error) {
+            console.log(error)
+          }
         },
       });
     } catch (error) {

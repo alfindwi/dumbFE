@@ -52,16 +52,16 @@ export function ChartForm() {
   };
 
   const handleOrder = async () => {
-    if (!cart || cart.length === 0) return;
+    // if (!cart || cart.length === 0) return;
   
-    for (const cartItem of cart) {
-      try {
-        const result = await dispatch(createCartToOrder({ cartId: cartItem.cartId })).unwrap();
-        console.log("Order created:", result);
-      } catch (error) {
-        console.error("Error creating order:", error);
-      }
-    }
+    // for (const cartItem of cart) {
+    //   try {
+    //     const result = await dispatch(createCartToOrder({ cartId: cartItem.cartId })).unwrap();
+    //     console.log("Order created:", result);
+    //   } catch (error) {
+    //     console.error("Error creating order:", error);
+    //   }
+    // }
   
     navigate("/checkout");
   };
