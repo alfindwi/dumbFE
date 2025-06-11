@@ -37,7 +37,7 @@ export function ComplainForm() {
   const messages = useAppSelector((state) => state.chat.messages);
 
   const socket = useMemo(() => {
-    return io("http://localhost:3000");
+    return io(import.meta.env.VITE_BACKEND_URL);
   }, []);
 
   const [newMessage, setNewMessage] = useState("");
