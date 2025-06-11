@@ -4,42 +4,46 @@ import { IUser } from "../../types/user";
 import Cookies from "js-cookie";
 
 export const updateUserAsync = createAsyncThunk<
-  { user: IUser },
-  { data: Partial<IUser> & { image?: File } },
+  IUser,
+  {
+    data: {
+      name: string;
+      phone: string;
+      gender: string;
+      address: string;
+      imageFile?: File; // 👈 Gunakan nama berbeda
+    };
+  },
   { rejectValue: string }
 >("user/updateUser", async ({ data }, thunkAPI) => {
   try {
     const token = Cookies.get("token");
-
-    if (!token) {
-      return thunkAPI.rejectWithValue("Token not found");
-    }
+    if (!token) return thunkAPI.rejectWithValue("Token not found");
 
     const formData = new FormData();
-    formData.append("name", data.name || "");
-    formData.append("phone", data.phone || "");
-    formData.append("gender", data.gender || "");
-    formData.append("address", data.address || "");
-    if (data.image) {
-      formData.append("image", data.image);
+    formData.append("name", data.name);
+    formData.append("phone", data.phone);
+    formData.append("gender", data.gender);
+    formData.append("address", data.address);
+    if (data.imageFile) {
+      formData.append("image", data.imageFile);
     }
 
-    const res = await api.put(`/user`, formData, {
+    const res = await api.put("/user", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     });
 
-    const updateUser = res.data.user;
+    const updatedUser = res.data.user;
+    Cookies.set("user", JSON.stringify(updatedUser), { expires: 7 });
 
-    Cookies.set("user", JSON.stringify(updateUser), { expires: 7 });
-
-    return updateUser;
+    return updatedUser;
   } catch (error) {
-    const errorMessage =
+    const errMsg =
       error instanceof Error ? error.message : "Something went wrong";
-    return thunkAPI.rejectWithValue(errorMessage);
+    return thunkAPI.rejectWithValue(errMsg);
   }
 });
 
@@ -53,12 +57,11 @@ export const getUserAsync = createAsyncThunk(
     } catch (error) {
       // Menangani error dengan lebih detail
       const errorMessage =
-        (error as any).response?.data?.message ||  // jika API mengirimkan error message di dalam respons
+        (error as any).response?.data?.message || // jika API mengirimkan error message di dalam respons
         (error as any).message || // jika menggunakan error objek standar
-        "Something went wrong";  // fallback
+        "Something went wrong"; // fallback
 
       return thunkAPI.rejectWithValue(errorMessage);
     }
   }
 );
-

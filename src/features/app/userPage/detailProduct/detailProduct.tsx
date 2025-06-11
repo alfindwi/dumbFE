@@ -79,10 +79,6 @@ export function DetailProduct() {
               Stok : {product.stok}
             </Text>
             <Box mb={5} paddingRight={3}>
-              <Text fontSize={"15px"}>-Bisa Menangkap tikus</Text>
-              <Text fontSize={"15px"}>-Bisa Menangkap tikus</Text>
-              <Text fontSize={"15px"}>-Bisa Menangkap tikus</Text>
-              <Text fontSize={"15px"}>-Bisa Menangkap tikus</Text>
               <Text
                 fontSize={"15px"}
                 mt={5}

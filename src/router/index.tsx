@@ -107,6 +107,7 @@ const routes: RouteObject[] = [
   },
 ];
 
+
 export default function Router() {
   return <RouterProvider router={createBrowserRouter(routes)} />;
 }

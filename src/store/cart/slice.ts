@@ -112,7 +112,6 @@ const cartSlice = createSlice({
           return total + itemTotalPrice;
         }, 0);
 
-        console.log("New Total Amount in Redux:", state.totalAmount);
         state.loading = false;
       })
       .addCase(updateCart.rejected, (state, action) => {

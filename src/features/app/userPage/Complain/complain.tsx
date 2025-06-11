@@ -6,6 +6,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Spinner,
   Text,
 } from "@chakra-ui/react";
 import { Navbar } from "../../../navbar/navbar";
@@ -62,7 +63,7 @@ export function ComplainForm() {
     dispatch(getUserAsync());
   
     socket.on("chat message", (msg) => {
-      console.log("New message received:", msg); // Log untuk cek pesan diterima
+      console.log("New message received:", msg);
       if (msg.roomId === currentRoomId) {
         dispatch(addMessage(msg));
       }
@@ -157,7 +158,7 @@ export function ComplainForm() {
       >
         <Flex direction="column" gap={4} overflowY="auto" flexGrow={1}>
           {loading ? (
-            <Text>Loading...</Text>
+            <Spinner/>
           ) : Array.isArray(messages) && messages.length > 0 ? (
             messages!.map((msg) => (
               <Flex

@@ -3,6 +3,7 @@ import { IUser } from "../../types/user";
 import { getUserAsync, updateUserAsync } from "./async";
 
 export interface UserState {
+  length: any;
   user: IUser;
   loading: boolean;
   error: string | null;
@@ -11,6 +12,7 @@ export interface UserState {
 const initialState: UserState = {
   user: {} as IUser,
   loading: false,
+  length: 0,
   error: null,
 };
 

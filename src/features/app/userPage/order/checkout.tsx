@@ -1,10 +1,14 @@
-import { Box, Text, Flex, Img, Divider, Button } from "@chakra-ui/react";
-import { Navbar } from "../../../navbar/navbar";
+import { Box, Button, Divider, Flex, Img, Text } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { useEffect } from "react";
-import { createOrder, getOrder, updatePayemntStatus } from "../../../../store/order/async";
 import { getCart } from "../../../../store/cart/async";
+import {
+  createOrder,
+  getOrder,
+  updatePaymentStatus,
+} from "../../../../store/order/async";
+import { Navbar } from "../../../navbar/navbar";
 
 export function Checkout() {
   return (
@@ -48,25 +52,50 @@ export function CheckOutForm() {
         onSuccess: async function (result: any) {
           console.log("Payment success");
           try {
-            await dispatch(updatePayemntStatus({orderId: result.order_id, status: "SUCCESS"}))
+            await dispatch(
+              updatePaymentStatus({
+                orderId: result.order_id,
+                status: "SUCCESS",
+              })
+            );
           } catch (error) {
             console.log("Error updating payment status:", error);
           }
         },
-        onPending: async function (result : any) {
+        onPending: async function (result: any) {
           console.log("Transaction pending");
           try {
-            await dispatch(updatePayemntStatus({orderId: result.order_id, status: "PENDING"}))
+            await dispatch(
+              updatePaymentStatus({
+                orderId: result.order_id,
+                status: "PENDING",
+              })
+            );
           } catch (error) {
             console.log("Error updating payment status:", error);
+          }
+        },
+        onClose: async function (id: any) {
+          console.log("Payment canceled");
+          try {
+            await dispatch(
+              updatePaymentStatus({ orderId: id, status: "CANCEL" })
+            );
+          } catch (error) {
+            console.log(error);
           }
         },
         onError: async function (result: any) {
           console.log("Payment failed");
           try {
-            await dispatch(updatePayemntStatus({orderId: result.order_id, status: "CANCEL"}))
+            await dispatch(
+              updatePaymentStatus({
+                orderId: result.order_id,
+                status: "CANCEL",
+              })
+            );
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         },
       });

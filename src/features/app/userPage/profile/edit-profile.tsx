@@ -19,7 +19,7 @@ export function EditProfile() {
 
   const [formData, setFormData] = useState({
     name: "",
-    email: "",  
+    email: "",
     phone: "",
     gender: "",
     address: "",
@@ -31,7 +31,7 @@ export function EditProfile() {
     if (user) {
       setFormData({
         name: user.name,
-        email: user.email, 
+        email: user.email,
         phone: user.phone,
         gender: user.gender,
         address: user.address,
@@ -43,21 +43,28 @@ export function EditProfile() {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
+    if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(updateUserAsync({ data: { ...formData, image: file } }));
+    dispatch(
+      updateUserAsync({
+        data: {
+          ...formData,
+          imageFile: file || undefined, // 👈 Beda nama dari IUser.image
+        },
+      })
+    );
   };
 
   return (
@@ -109,6 +116,7 @@ export function EditProfile() {
           value={formData.gender}
           onChange={handleChange}
           width="100%"
+          required
         >
           <option value="" disabled hidden>
             Select Gender

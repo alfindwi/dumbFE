@@ -8,13 +8,13 @@ import Cookies from "js-cookie";
 export function Navbar() {
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const {cart} = useAppSelector((state) => state.cart);
+  const { cart } = useAppSelector((state) => state.cart);
   const handleLogout = () => {
     dispatch(LOGOUT());
     Cookies.remove("token");
     Cookies.remove("role");
   };
-  
+
   return (
     <Flex
       as="nav"
@@ -39,25 +39,25 @@ export function Navbar() {
               _hover={{ color: "#F74D4D" }}
               cursor="pointer"
             />
-          {cart && cart.length > 0 && (
-            <Badge
-              position="absolute"
-              top="-1" 
-              right="-2"
-              bg="#F74D4D"
-              color="white"
-              borderRadius="full"
-              fontSize="12px"
-              w="18px"
-              h="18px"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              boxShadow="0 0 4px rgba(0, 0, 0, 0.5)" 
-            >
-              {cart.length}
-            </Badge>
-          )}
+            {cart && cart.length > 0 && (
+              <Badge
+                position="absolute"
+                top="-1"
+                right="-2"
+                bg="#F74D4D"
+                color="white"
+                borderRadius="full"
+                fontSize="12px"
+                w="18px"
+                h="18px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                boxShadow="0 0 4px rgba(0, 0, 0, 0.5)"
+              >
+                {cart.length}
+              </Badge>
+            )}
           </Box>
         </Link>
 

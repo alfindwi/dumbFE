@@ -104,7 +104,7 @@ export function CategoryForm() {
             _active={{ bgColor: "#3f963f" }}
             onClick={onAddOpen}
           >
-            Add Product
+            Add Category
           </Button>
         </Flex>
         <TableContainer>

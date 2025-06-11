@@ -124,7 +124,7 @@ export function ProfileUser() {
         </Text>
         {orders.map((order) => (
           <Flex>
-            <Box bg="#212121" height="100%" borderRadius="md" w="100%" mt={4} p={3}>
+            <Box bg="#212121" height="100%" borderRadius="md" w="600px" maxW={"600px"} mt={4} p={3}>
               <Flex height="100%" alignItems="center">
                 <Img
                   w="120px"

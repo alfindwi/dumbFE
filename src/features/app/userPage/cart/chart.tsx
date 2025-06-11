@@ -1,18 +1,16 @@
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   Flex,
   Img,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import {
-  createCartToOrder,
   deleteCart,
   getCart,
   updateCart,
@@ -32,7 +30,7 @@ export function Chart() {
 export function ChartForm() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { cart, totalAmount } = useAppSelector((state) => state.cart);
+  const { cart } = useAppSelector((state) => state.cart);
 
   const handleUpdateCart = async (cartItem: cartItems, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -79,7 +77,6 @@ export function ChartForm() {
         {cart && cart.length > 0 ? (
           cart.map((carts) => (
             <Flex key={carts.id} p={3}>
-              <Checkbox colorScheme="red" mr={4} ml={2} size="md" />
               <Img
                 src={carts.product?.image}
                 w="100%"
@@ -87,7 +84,7 @@ export function ChartForm() {
                 h="100%"
                 maxH="500px"
               />
-              <Box ml={2} w="40%" h="100%">
+              <Box ml={2} w="70%"  h="100%">
                 <Text color="#F74D4D" fontWeight="bold" fontSize="24px">
                   {carts.product?.product_name}
                 </Text>
@@ -168,7 +165,7 @@ export function ChartForm() {
           fontSize="20px"
           mr="1%"
         >
-          Total : <span>Rp.{totalAmount}</span>
+          Total : <span>Rp.{cart.reduce((total, item) => total + item.totalPrice, 0)}</span>
         </Text>
 
         <Flex justify="flex-end" mr="1%">

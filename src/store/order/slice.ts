@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { createOrder, getOrder, updatePayemntStatus } from "./async";
 import { IOrder } from "../../types/order";
+import { createOrder, getOrder, updatePaymentStatus } from "./async";
 
 interface OrderState {
   orders: IOrder[]; 
@@ -53,15 +53,16 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(updatePayemntStatus.pending, (state) => {
+
+      // Update payment status
+      .addCase(updatePaymentStatus.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(updatePayemntStatus.fulfilled, (state, action) => {
-        action.payload;
+      .addCase(updatePaymentStatus.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(updatePayemntStatus.rejected, (state, action) => {
+      .addCase(updatePaymentStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

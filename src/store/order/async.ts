@@ -41,6 +41,7 @@ export const createOrder = createAsyncThunk(
         return {
           token: res.data.transaction.token,
           redirect_url: res.data.transaction.redirect_url,
+          orderId: res.data.orderId,
         };
       } else {
         return thunkAPI.rejectWithValue("Transaction data is missing.");
@@ -51,7 +52,7 @@ export const createOrder = createAsyncThunk(
   }
 );
 
-export const updatePayemntStatus = createAsyncThunk(
+export const updatePaymentStatus = createAsyncThunk(
   "order/updatePayemntStatus",
   async (data: { orderId: number; status: string }, thunkAPI) => {
     try {

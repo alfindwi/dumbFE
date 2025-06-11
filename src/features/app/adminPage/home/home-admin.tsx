@@ -1,157 +1,33 @@
-import { Box, Flex } from "@chakra-ui/react";
-import { NavbarAdmin } from "../../../navbar/navbar-admin";
-import { Line, Pie, Bar } from 'react-chartjs-2';
+import { Box, Flex, Text } from "@chakra-ui/react";
+import { Bar } from "react-chartjs-2";
 import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
   Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { FaUsers } from "react-icons/fa";
+import { NavbarAdmin } from "../../../navbar/navbar-admin";
+import { useAppDispatch, useAppSelector } from "../../../../store";
+import { useEffect } from "react";
+import { getTransaction } from "../../../../store/transaction/async";
+import { getProducts } from "../../../../store/product/async";
+import { getUserAsync } from "../../../../store/user/async";
+import { getOrder } from "../../../../store/order/async";
+
+ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
   BarElement,
   ArcElement,
   Title,
   Tooltip,
-  Legend,
-} from 'chart.js';
-
-// Register required elements for Line, Pie, and Bar charts
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
-
-const lineData = {
-  labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
-  datasets: [
-    {
-      label: 'Pengguna Baru per Bulan',
-      data: [50, 75, 60, 80, 90, 120, 110, 130, 95, 100, 85, 150], // Jumlah pengguna baru yang mendaftar setiap bulan
-      borderColor: 'rgba(54, 162, 235, 1)',
-      backgroundColor: 'rgba(54, 162, 235, 0.2)',
-      borderWidth: 2,
-      fill: true,
-    },
-  ],
-};
-
-const lineOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Jumlah Pengguna Baru yang Mendaftar per Bulan',
-    },
-  },
-};
-
-
-
-const pieData = {
-  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-  datasets: [
-    {
-      label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
-      borderWidth: 1,
-      backgroundColor: ['#CB4335', '#1F618D', '#F1C40F', '#27AE60', '#884EA0', '#D35400'],
-    },
-  ],
-};
-
-const barData = {
-  labels: ['batik barca', 'baju mu'], // Product names
-  datasets: [
-    {
-      label: 'Initial Stock',
-      data: [222, 444],
-      backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      borderColor: 'rgba(75, 192, 192, 1)',
-      borderWidth: 1,
-    },
-    {
-      label: 'Quantity Sold',
-      data: [200, 300],
-      backgroundColor: 'rgba(255, 99, 132, 0.6)',
-      borderColor: 'rgba(255, 99, 132, 1)',
-      borderWidth: 1,
-    },
-    {
-      label: 'Remaining Stock',
-      data: [214, 439],
-      backgroundColor: 'rgba(54, 162, 235, 0.6)',
-      borderColor: 'rgba(54, 162, 235, 1)',
-      borderWidth: 1,
-    },
-  ],
-};
-
-
-const barOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-      labels: {
-        color: '#ffffff', // Change legend text color to white
-      },
-    },
-    title: {
-      display: true,
-      text: 'Stock and Sales Data by Product',
-      color: '#ffffff', // Title color
-      font: {
-        size: 18,
-      },
-    },
-  },
-  scales: {
-    x: {
-      ticks: {
-        color: '#ffffff', // X-axis label color
-      },
-      grid: {
-        display: false, // Hide gridlines on x-axis for a cleaner look
-      },
-    },
-    y: {
-      beginAtZero: true,
-      ticks: {
-        color: '#ffffff', // Y-axis label color
-      },
-      grid: {
-        color: 'rgba(255, 255, 255, 0.2)', // Lighter gridline color on y-axis
-      },
-    },
-  },
-};
-
-
-
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Sales Over Time (Line Chart)',
-    },
-  },
-};
-
-const pieOptions = {
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Product Sales',
-    },
-  },
-};
-
+  Legend
+);
 
 export function HomeAdmin() {
   return (
@@ -162,48 +38,173 @@ export function HomeAdmin() {
   );
 }
 
-const DashboardContent = () => (
-  <Flex
-    direction="column"
-    color="white"
-    w="100%"
-    h="100vh"
-    justifyContent="center"
-    alignItems="center"
-    gap={5}
-    p={4}
-  >
-    <Box w="500px" h="300px" p={4} bg="#1c1c1c" borderRadius="md">
-      <Line data={lineData} options={lineOptions} />
-    </Box>
+const DashboardContent = () => {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
+  console.log(user);
+  const userCount = user?.user?.length || 0;
+  const order = useAppSelector((state) => state.transaction);
+  const product = useAppSelector((state) => state.product.products);
+  useEffect(() => {
+    dispatch(getTransaction());
+    dispatch(getProducts());
+    dispatch(getUserAsync());
+    dispatch(getOrder());
+  }, [dispatch]);
 
-    <Flex gap={5}>
-      <Box
-        w="300px"
-        h="300px"
-        p={4}
-        bg="#1c1c1c"
-        borderRadius="md"
-        display="flex"
+  const transactionStatus = order.order.reduce(
+    (acc: any, currentTransaction) => {
+      if (currentTransaction.status === "PENDING") {
+        acc.pending++;
+      } else if (currentTransaction.status === "SUCCESS") {
+        acc.success++;
+      } else if (currentTransaction.status === "CANCEL") {
+        acc.cancel++;
+      }
+      return acc;
+    },
+    { pending: 0, success: 0, cancel: 0 }
+  )
+
+  const data = {
+    labels: ["PENDING", "SUCCESS", "CANCEL"],
+    datasets: [
+      {
+        label: "Orders",
+        data: [transactionStatus.pending, transactionStatus.success, transactionStatus.cancel],
+        backgroundColor: ["#F09319", "#185519", "#B8001F"],
+        borderColor: ["#FFE31A", "#31511E", "#3D0301"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  return (
+    <>
+      <Flex
+        direction="row"
+        gap={4}
         justifyContent="center"
         alignItems="center"
+        mt={10}
+        ml={6}
       >
-        <Pie data={pieData} options={pieOptions} />
-      </Box>
+        <Flex
+          bg="linear-gradient(135deg, #F56565, #ED64A6)"
+          p={6}
+          w="240px"
+          gap={3}
+          borderRadius="md"
+          boxShadow="xl"
+          alignItems="center"
+        >
+          <Box p={2}>
+            <FaUsers fontSize="50px" />
+          </Box>
+          <Box>
+            <Text fontSize="2xl" fontWeight="bold">
+              {userCount}
+            </Text>
+            <Text fontSize="lg" opacity={0.8}>
+              Users
+            </Text>
+          </Box>
+        </Flex>
 
-      {/* Bar Chart */}
+        <Flex
+          bg="linear-gradient(135deg, #F56565, #ED64A6)"
+          p={6}
+          w="240px"
+          gap={3}
+          borderRadius="md"
+          boxShadow="xl"
+          alignItems="center"
+        >
+          <Box p={2}>
+            <FaUsers fontSize="50px" />
+          </Box>
+          <Box>
+            <Text fontSize="2xl" fontWeight="bold">
+              {product.length}
+            </Text>
+            <Text fontSize="lg" opacity={0.8}>
+              Product
+            </Text>
+          </Box>
+        </Flex>
+
+        <Flex
+          bg="linear-gradient(135deg, #F56565, #ED64A6)"
+          p={6}
+          w="240px"
+          gap={3}
+          borderRadius="md"
+          boxShadow="xl"
+          alignItems="center"
+        >
+          <Box p={2}>
+            <FaUsers fontSize="50px" />
+          </Box>
+          <Box>
+            <Text fontSize="2xl" fontWeight="bold">
+              {order.order.length}
+            </Text>
+            <Text fontSize="lg" opacity={0.8}>
+              Transaction
+            </Text>
+          </Box>
+        </Flex>
+      </Flex>
+
       <Box
-        w="300px"
-        h="300px"
-        p={4}
-        bg="#1c1c1c"
+        mt={10}
+        mx="auto"
+        w="80%"
+        bg="#1A1A19"
+        p={8}
         borderRadius="md"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
+        boxShadow="lg"
+        display={"flex"}
+        justifyContent={"center"}
       >
-        <Bar data={barData} options={barOptions} />
+        <Bar
+          data={data}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: "ORDER STATUS",
+                color: "white",
+                font: { size: 18, weight: "bold" },
+              },
+              legend: {
+                labels: {
+                  color: "white",
+                },
+              },
+              tooltip: {
+                bodyColor: "white",
+                titleColor: "white",
+              },
+            },
+            responsive: true,
+            scales: {
+              x: {
+                stacked: true,
+                ticks: {
+                  color: "white",
+                },
+              },
+              y: {
+                stacked: true,
+                ticks: {
+                  color: "white",
+                },
+              },
+            },
+          }}
+        />
       </Box>
-    </Flex>
-  </Flex>
-);
+    </>
+  );
+};
