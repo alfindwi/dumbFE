@@ -1,8 +1,17 @@
-import { Box, Button, Icon, Input, Select, Spinner, Textarea, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Icon,
+  Input,
+  Select,
+  Spinner,
+  Textarea,
+  useToast,
+} from "@chakra-ui/react";
 import { FaFileImage } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { useEffect, useState } from "react";
-import { createProduct } from "../../../../store/product/async";
+import { createProduct, getProducts } from "../../../../store/product/async";
 import { getCategory } from "../../../../store/category/async";
 
 export function AddProduct() {
@@ -16,12 +25,12 @@ export function AddProduct() {
   const [image, setImage] = useState<File | null>(null);
   const [categoryId, setCategoryId] = useState("");
 
-  const { category} = useAppSelector((state) => state.category)
-  const {loading} = useAppSelector((state) => state.product)
+  const { category } = useAppSelector((state) => state.category);
+  const { loading } = useAppSelector((state) => state.product);
 
   useEffect(() => {
-    dispatch(getCategory())
-  }, [dispatch])
+    dispatch(getCategory());
+  }, [dispatch]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -37,7 +46,7 @@ export function AddProduct() {
     formData.append("product_desc", productDesc);
     formData.append("price", price);
     formData.append("stok", stok);
-    formData.append("categoryId", categoryId)
+    formData.append("categoryId", categoryId);
     if (image) {
       formData.append("image", image);
     }
@@ -52,6 +61,13 @@ export function AddProduct() {
           duration: 3000,
           isClosable: true,
         });
+
+        dispatch(getProducts());
+
+        setProductName("");
+        setProductDesc("");
+        setPrice("");
+        setStok("");
       } else {
         throw new Error("Failed to add product");
       }
@@ -70,7 +86,12 @@ export function AddProduct() {
     <form onSubmit={handleSubmit}>
       <Box p={1}>
         <Box mb={4} textAlign="center">
-          <Input type="file" id="profile-picture" display="none" onChange={handleFileChange} />
+          <Input
+            type="file"
+            id="profile-picture"
+            display="none"
+            onChange={handleFileChange}
+          />
           <label htmlFor="profile-picture">
             <Button
               as="span"
@@ -115,16 +136,30 @@ export function AddProduct() {
           width={"100%"}
           onChange={(e) => setStok(e.target.value)}
         />
-        <Select mt={1} mb={2} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-          <option value="" disabled>Selected Category</option>
-          {category && category.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
+        <Select
+          mt={1}
+          mb={2}
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
+        >
+          <option value="" disabled>
+            Selected Category
+          </option>
+          {category &&
+            category.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
         </Select>
-        <Button bg={"#F74D4D"} ml={"83%"} mt={2} type="submit" _hover={{ bg: "#D63C3C" }}>
-          {loading ? <Spinner/> : "Save"}
+        <Button
+          bg={"#F74D4D"}
+          ml={"83%"}
+          mt={2}
+          type="submit"
+          _hover={{ bg: "#D63C3C" }}
+        >
+          {loading ? <Spinner /> : "Save"}
         </Button>
       </Box>
     </form>

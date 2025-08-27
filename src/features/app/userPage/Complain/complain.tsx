@@ -111,7 +111,6 @@ export function ComplainForm() {
 
   return (
     <>
-      {/* Sidebar */}
       <Box
         position="absolute"
         top="0"
@@ -147,7 +146,6 @@ export function ComplainForm() {
         </Box>
       </Box>
 
-      {/* Main Chat Area */}
       <Box
         w="75%"
         p={4}
@@ -201,7 +199,6 @@ export function ComplainForm() {
           ) : null}
         </Flex>
 
-        {/* Input for sending messages */}
         <InputGroup mt={5}>
           <Input
             _placeholder={{ color: "#878787" }}

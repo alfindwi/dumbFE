@@ -24,7 +24,7 @@ export function NavbarAdmin() {
       zIndex={1}
     >
       <Flex alignItems="center" as={Link} to="/admin" ml={5}>
-        <Img src="https://res.cloudinary.com/db2rr1kej/image/upload/v1749618908/logo_khch8q.png" alt="Logo" width="50px" zIndex={2} />
+        <Img src="../src/assets/logo.svg" alt="Logo" width="50px" zIndex={2} />
       </Flex>
 
       <Flex gap={8} mr={5} alignItems="center">

@@ -66,8 +66,13 @@ const authSlice = createSlice({
 
     builder
       .addCase(updateUserAsync.fulfilled, (state, action) => {
-        state.user = { ...state.user, ...action.payload }; 
-        Cookies.set("user", JSON.stringify(state.user), { expires: 7 }); 
+        state.loading = false;
+        state.user = { ...state.user, ...action.payload };
+        Cookies.set("user", JSON.stringify(state.user), { expires: 7 });
+      })
+      .addCase(updateUserAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(updateUserAsync.rejected, (state, action) => {
         state.error = action.payload as string;

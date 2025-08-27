@@ -1,7 +1,7 @@
 import { Box, Button, Input, Spinner, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { createCategory } from "../../../../store/category/async";
+import { createCategory, getCategory } from "../../../../store/category/async";
 
 export function AddCategory() {
   const dispatch = useAppDispatch();
@@ -39,6 +39,7 @@ export function AddCategory() {
           duration: 3000,
           isClosable: true,
         });
+        dispatch(getCategory());
         setName("");
       } else {
         throw new Error("Failed to add category");

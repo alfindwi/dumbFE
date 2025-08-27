@@ -61,7 +61,7 @@ export function EditProfile() {
       updateUserAsync({
         data: {
           ...formData,
-          imageFile: file || undefined, // 👈 Beda nama dari IUser.image
+          imageFile: file || undefined, 
         },
       })
     );
@@ -149,7 +149,6 @@ export function EditProfile() {
           color="white"
           _hover={{ bgColor: "#D63C3C" }}
           fontWeight="bold"
-          isDisabled={loading}
         >
           {loading ? <Spinner color="white" /> : "Update Profile"}
         </Button>

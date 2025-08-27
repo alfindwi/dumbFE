@@ -78,7 +78,6 @@ const productSlice = createSlice({
       });
 
     //   delete product 
-
     builder.addCase(deleteProduct.pending, (state) => {
       state.loading = true;
       state.error = null;

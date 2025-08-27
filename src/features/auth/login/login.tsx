@@ -76,7 +76,7 @@ export function LoginForm() {
       p={10}
     >
       <Box flex="1" ml={"7%"}>
-        <Img src="https://res.cloudinary.com/db2rr1kej/image/upload/v1749618908/logo_khch8q.png" alt="Logo" width={"30%"} />
+        <Img src="../src/assets/logo.svg" alt="Logo" width={"30%"} />
         <Text fontSize={"45px"} mt={"30px"} color="white">
           Easy, Fast and Reliable
         </Text>
@@ -111,7 +111,6 @@ export function LoginForm() {
         </Box>
       </Box>
 
-      {/* Bagian Kanan - Form Login */}
       <Box
         flex="1"
         maxW="400px"
