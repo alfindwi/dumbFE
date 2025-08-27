@@ -1,20 +1,9 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Img,
-  Text
-} from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Img, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import {
-  deleteCart,
-  getCart,
-  updateCart,
-} from "../../../../store/cart/async";
+import { deleteCart, getCart, updateCart } from "../../../../store/cart/async";
 import { cartItems } from "../../../../types/cart";
 import { Navbar } from "../../../navbar/navbar";
 
@@ -50,19 +39,10 @@ export function ChartForm() {
   };
 
   const handleOrder = async () => {
-    // if (!cart || cart.length === 0) return;
-  
-    // for (const cartItem of cart) {
-    //   try {
-    //     const result = await dispatch(createCartToOrder({ cartId: cartItem.cartId })).unwrap();
-    //     console.log("Order created:", result);
-    //   } catch (error) {
-    //     console.error("Error creating order:", error);
-    //   }
-    // }
-  
     navigate("/checkout");
   };
+
+
 
   useEffect(() => {
     dispatch(getCart());
@@ -84,7 +64,7 @@ export function ChartForm() {
                 h="100%"
                 maxH="500px"
               />
-              <Box ml={2} w="70%"  h="100%">
+              <Box ml={2} w="70%" h="100%">
                 <Text color="#F74D4D" fontWeight="bold" fontSize="24px">
                   {carts.product?.product_name}
                 </Text>
@@ -112,6 +92,7 @@ export function ChartForm() {
                     _active={{ bg: "#A32A2A" }}
                     borderRadius="full"
                     fontSize="20px"
+                    isDisabled={carts.quantity === 1}
                     onClick={() =>
                       handleUpdateCart(carts, Math.max(carts.quantity - 1, 1))
                     }
@@ -165,7 +146,10 @@ export function ChartForm() {
           fontSize="20px"
           mr="1%"
         >
-          Total : <span>Rp.{cart.reduce((total, item) => total + item.totalPrice, 0)}</span>
+          Total :{" "}
+          <span>
+            Rp.{cart.reduce((total, item) => total + item.totalPrice, 0)}
+          </span>
         </Text>
 
         <Flex justify="flex-end" mr="1%">

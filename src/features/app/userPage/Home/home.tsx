@@ -18,22 +18,21 @@ export function Home() {
 export function Card() {
   const dispatch = useAppDispatch();
   const { products } = useAppSelector((state) => state.product);
-  const navigate = useNavigate()
-  
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getProducts());
   }, [dispatch]);
 
-  const handleAddCart = (productId : number) => {
+  const handleAddCart = (productId: number) => {
     dispatch(createCart({ productId }))
-    .then(() => {
-      navigate("/chart")
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
+      .then(() => {
+        navigate("/chart");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <Box p={7}>
@@ -54,48 +53,48 @@ export function Card() {
             mt={2}
             borderRadius="md"
             w={"250px"}
-            as={Link}
-            to={`/detail/${product.id}`}
             _hover={{ transform: "scale(1.05)", boxShadow: "lg" }}
             transition="transform 0.5s ease, box-shadow 0.2s ease"
             gap={"20px"}
           >
-            <Img
-              src={product.image}
-              w={"100%"}
-              h={"280px"}
-              objectFit={"cover"}
-              borderTopRadius="md"
-            />
-            <Box mt={4} ml={3}>
-              <Text
-                mt={2}
-                color={"#F74D4D"}
-                fontWeight={"bold"}
-                fontSize={"20px"}
-                wordBreak="break-word"
-                isTruncated
-              >
-                {product.product_name}
-              </Text>
-              <Flex
-                mt={1}
-                color="white"
-                alignItems="center"
-                justifyContent="space-between"
+            <Flex direction={"column"} as={Link} to={`/detail/${product.id}`}>
+              <Img
+                src={product.image}
                 w={"100%"}
-              >
-                <Text>Rp. {product.price}</Text>
+                h={"280px"}
+                objectFit={"cover"}
+                borderTopRadius="md"
+              />
+              <Box mt={4} ml={3}>
                 <Text
-                  fontSize={"14px"}
-                  color={"#6A6A6A"}
-                  mr={2}
-                  fontWeight={"semibold"}
+                  mt={2}
+                  color={"#F74D4D"}
+                  fontWeight={"bold"}
+                  fontSize={"20px"}
+                  wordBreak="break-word"
+                  isTruncated
                 >
-                  Stok: <span>{product.stok}</span>
+                  {product.product_name}
                 </Text>
-              </Flex>
-            </Box>
+                <Flex
+                  mt={1}
+                  color="white"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  w={"100%"}
+                >
+                  <Text>Rp. {product.price}</Text>
+                  <Text
+                    fontSize={"14px"}
+                    color={"#6A6A6A"}
+                    mr={2}
+                    fontWeight={"semibold"}
+                  >
+                    Stok: <span>{product.stok}</span>
+                  </Text>
+                </Flex>
+              </Box>
+            </Flex>
             <Button
               mt={3}
               w={"90%"}

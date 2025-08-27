@@ -9,6 +9,8 @@ import {
   updatePaymentStatus,
 } from "../../../../store/order/async";
 import { Navbar } from "../../../navbar/navbar";
+import { useNavigate } from "react-router-dom";
+import { clearCart } from "../../../../store/cart/slice";
 
 export function Checkout() {
   return (
@@ -20,6 +22,7 @@ export function Checkout() {
 }
 export function CheckOutForm() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const { cart, id: cartId } = useAppSelector((state) => state.cart);
 
@@ -30,6 +33,11 @@ export function CheckOutForm() {
   useEffect(() => {
     dispatch(getOrder());
   }, [dispatch]);
+
+  const handlePaymentSuccess = () => {
+    navigate("/");
+    dispatch(clearCart());
+  };
 
   const handlePayment = async () => {
     if (!cart || cart.length === 0) {
@@ -49,15 +57,10 @@ export function CheckOutForm() {
       console.log("Transaction Token:", token);
 
       window.snap.pay(token, {
-        onSuccess: async function (result: any) {
+        onSuccess: async function () {
           console.log("Payment success");
           try {
-            await dispatch(
-              updatePaymentStatus({
-                orderId: result.order_id,
-                status: "SUCCESS",
-              })
-            );
+            handlePaymentSuccess();
           } catch (error) {
             console.log("Error updating payment status:", error);
           }
@@ -220,7 +223,8 @@ export function CheckOutForm() {
                     <Img
                       src={item.product?.image}
                       w={"70px"}
-                      h={"60px"}
+                      h={"100px"}
+                      objectFit={"cover"}
                       mr={4}
                     />
                     <Text

@@ -1,12 +1,21 @@
-import { Box, Button, Icon, Input, Textarea, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Icon,
+  Input,
+  Spinner,
+  Textarea,
+  useToast,
+} from "@chakra-ui/react";
 import { FaFileImage } from "react-icons/fa6";
-import { useAppDispatch } from "../../../../store";
-import { updateProduct } from "../../../../store/product/async";
+import { useAppDispatch, useAppSelector } from "../../../../store";
+import { getProducts, updateProduct } from "../../../../store/product/async";
 import { useState } from "react";
 
 export function EditProduct({ product }: { product: any }) {
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const { loading } = useAppSelector((state) => state.product);
 
   const [product_name, setProductName] = useState(product.product_name ?? "");
   const [product_desc, setProductDesc] = useState(product.product_desc ?? "");
@@ -33,7 +42,9 @@ export function EditProduct({ product }: { product: any }) {
     }
 
     try {
-      const resultAction = await dispatch(updateProduct({ id: product.id, formData }));
+      const resultAction = await dispatch(
+        updateProduct({ id: product.id, formData })
+      );
       if (updateProduct.fulfilled.match(resultAction)) {
         toast({
           title: "Product updated.",
@@ -42,6 +53,10 @@ export function EditProduct({ product }: { product: any }) {
           duration: 3000,
           isClosable: true,
         });
+
+        dispatch(getProducts());
+
+        
       } else {
         throw new Error("Failed to update product");
       }
@@ -59,7 +74,6 @@ export function EditProduct({ product }: { product: any }) {
   return (
     <form onSubmit={handleSubmit}>
       <Box p={1}>
-        {/* Input untuk Gambar */}
         <Box mb={4} textAlign="center">
           <Input
             type="file"
@@ -82,7 +96,6 @@ export function EditProduct({ product }: { product: any }) {
           </label>
         </Box>
 
-        {/* Input untuk Nama Produk */}
         <Input
           mb={2}
           placeholder="Product Name"
@@ -92,7 +105,6 @@ export function EditProduct({ product }: { product: any }) {
           onChange={(e) => setProductName(e.target.value)}
         />
 
-        {/* Input untuk Deskripsi Produk */}
         <Textarea
           mb={2}
           placeholder="Product Description"
@@ -103,7 +115,6 @@ export function EditProduct({ product }: { product: any }) {
           onChange={(e) => setProductDesc(e.target.value)}
         />
 
-        {/* Input untuk Harga */}
         <Input
           mb={2}
           placeholder="Price"
@@ -113,7 +124,6 @@ export function EditProduct({ product }: { product: any }) {
           onChange={(e) => setPrice(e.target.value)}
         />
 
-        {/* Input untuk Jumlah Stok */}
         <Input
           mb={2}
           placeholder="Stock Quantity"
@@ -123,7 +133,6 @@ export function EditProduct({ product }: { product: any }) {
           onChange={(e) => setStock(e.target.value)}
         />
 
-        {/* Tombol Simpan */}
         <Button
           bg={"#F74D4D"}
           ml={"83%"}
@@ -131,7 +140,7 @@ export function EditProduct({ product }: { product: any }) {
           type="submit"
           _hover={{ bg: "#D63C3C" }}
         >
-          Save
+          {loading ? <Spinner /> : "Save"}
         </Button>
       </Box>
     </form>

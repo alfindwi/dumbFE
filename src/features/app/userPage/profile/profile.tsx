@@ -122,38 +122,53 @@ export function ProfileUser() {
         <Text color="#F74D4D" fontWeight="bold" fontSize="26px">
           My Transaction
         </Text>
-        {orders.map((order) => (
-          <Flex>
-            <Box bg="#212121" height="100%" borderRadius="md" w="600px" maxW={"600px"} mt={4} p={3}>
-              <Flex height="100%" alignItems="center">
-                <Img
-                  w="120px"
-                  h="160px"
-                  padding="10px"
-                  src={order.OrderItems[0].product.image}
-                  objectFit="cover"
-                />
-                <Box ml={4} mt={3} flex="1">
-                  <Text color="#F74D4D" fontWeight="bold" fontSize="16px" maxW={"400px"}>
-                    {order.OrderItems[0].product.product_name}
-                  </Text>
-                  <Text color="#F74D4D" fontSize="12px" fontWeight="light">
-                    {new Date(order.createdAt).toDateString()}
-                  </Text>
-                  <Text color="white" fontSize="12px" mt={2}>
-                    Price: Rp. {order.OrderItems[0].product.price}
-                  </Text>
-                  <Text color="white" fontSize="15px" mt={2} fontWeight="bold">
-                    Sub Total: Rp. {order.totalAmount}
-                  </Text>
-                </Box>
-                <Box textAlign="center" mt={2}>
-                  <Img w="100%" h="70px" src="/src/assets/logo.svg" />
-                </Box>
-              </Flex>
-            </Box>
-          </Flex>
-        ))}
+        {orders.map((order) => {
+          const firstItem = order.OrderItems[0];
+          if (!firstItem || !firstItem.product) return null; 
+
+          return (
+            <Flex key={order.id}>
+              <Box bg="#212121" borderRadius="md" w="600px" mt={4} p={3}>
+                <Flex alignItems="center">
+                  <Img
+                    w="120px"
+                    h="160px"
+                    padding="10px"
+                    src={firstItem.product.image}
+                    objectFit="cover"
+                  />
+                  <Box ml={4} mt={3} flex="1">
+                    <Text
+                      color="#F74D4D"
+                      fontWeight="bold"
+                      fontSize="16px"
+                      maxW="400px"
+                    >
+                      {firstItem.product.product_name}
+                    </Text>
+                    <Text color="#F74D4D" fontSize="12px" fontWeight="light">
+                      {new Date(order.createdAt).toDateString()}
+                    </Text>
+                    <Text color="white" fontSize="12px" mt={2}>
+                      Price: Rp. {firstItem.product.price}
+                    </Text>
+                    <Text
+                      color="white"
+                      fontSize="15px"
+                      mt={2}
+                      fontWeight="bold"
+                    >
+                      Sub Total: Rp. {order.totalAmount}
+                    </Text>
+                  </Box>
+                  <Box textAlign="center" mt={2}>
+                    <Img w="100%" h="70px" src="/src/assets/logo.svg" />
+                  </Box>
+                </Flex>
+              </Box>
+            </Flex>
+          );
+        })}
       </Box>
 
       {/* Edit Profile Modal */}
